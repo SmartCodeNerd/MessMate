@@ -6,7 +6,7 @@ import {
   updateCollege,
   deleteCollege,
 } from "../controllers/collegeController.js";
-import {protect,isClgAdmin,isMessAdmin,isStudent,is} from "../customMiddleware/auth.js"
+import {protect,isSuperAdmin} from "../customMiddleware/auth.js"
 
 
 const router = express.Router();
