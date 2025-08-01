@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -33,15 +34,32 @@ const UserSchema = new mongoose.Schema({
     },
     studentId: { // College roll number
         type: String,
-        required: true,
+        required: function () {
+            return this.role === 'Student';
+        },
         unique: true,
+        sparse: true,
     },
     idCardPhotoURL: {
         type: String,
-        required: true,
+        required: function () {
+            return this.role === 'Student';
+        },
     },
 }, {
     timestamps: true,
 });
 
-module.exports = mongoose.model('User', UserSchema);
+// 🔐 Pre-save hook to hash password
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next(); // Only hash if password changed or new
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (err) {
+        return next(err);
+    }
+});
+
+export default mongoose.model('User', UserSchema);
