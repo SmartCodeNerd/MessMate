@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['superadmin', 'collegeadmin', 'messadmin', 'student'],
+    enum: ['SuperAdmin', 'CollegeAdmin', 'MessAdmin', 'Student'],
     required: true,
   },
   collegeId: {
@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
   },
   isFirstLogin: {
     type: Boolean,
-    default: true,
+    default: false,
   },
 }, {
   timestamps: true,
