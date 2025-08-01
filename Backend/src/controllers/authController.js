@@ -1,6 +1,3 @@
-import College from "../models/collegeModel.js"
-import MessAdminProfile from "../models/messAdminProfile.js"
-import StudentProfile from "../models/studentProfileModel.js"
 import User from "../models/userModel.js"
 import "dotenv/config"; 
 import bcrypt from 'bcryptjs';
@@ -11,9 +8,7 @@ import { sendEmail } from '../utils/emailService.js';
 const generateRandomPassword = () => {
     return crypto.randomBytes(5).toString('hex');
 };
-
-
-/**
+/*
  * @desc    Register a new College Admin (Superadmin only)
  * @route   POST /api/auth/register-college-admin
  * @access  Private (Superadmin)
@@ -72,7 +67,6 @@ exports.registerCollegeAdmin = async (req, res, next) => {
  * @route   POST /api/auth/register-user
  * @access  Private (CollegeAdmin)
  */
-
 exports.registerStudentOrMessAdmin = async (req, res, next) => {
     // This route should be protected by an isCollegeAdmin middleware
     // The logged-in user's info (especially collegeId) will be in req.user from the token
@@ -119,6 +113,7 @@ exports.registerStudentOrMessAdmin = async (req, res, next) => {
         res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
+
 
 /**
  * @desc    Login user and return JWT

@@ -1,5 +1,4 @@
-// utils/emailService.js
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer'
 
 exports.sendEmail = async (options) => {
     // 1. Create a transporter
