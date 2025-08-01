@@ -10,7 +10,6 @@ connectDB();
 
 app.listen(port,() => {
     console.log(`Server is Listening to Port-${port}`);
-    console.log("Working");
 });
 
 
