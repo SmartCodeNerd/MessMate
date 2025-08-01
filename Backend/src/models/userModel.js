@@ -1,37 +1,65 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: { // Used for login + mailing credentials
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: { // Hashed password
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: ['SuperAdmin', 'CollegeAdmin', 'MessAdmin', 'Student'],
-    required: true,
-  },
-  collegeId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'College',
-    required: function () {
-      return this.role !== 'superadmin';
+    name: {
+        type: String,
+        required: true,
     },
-  },
-  isFirstLogin: {
-    type: Boolean,
-    default: false,
-  },
+    email: { // Used for login + mailing credentials
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: { // Hashed password
+        type: String,
+        required: true,
+    },
+    role: {
+        type: String,
+        enum: ['SuperAdmin', 'CollegeAdmin', 'MessAdmin', 'Student'],
+        required: true,
+    },
+    collegeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'College',
+    },
+    contactNumber: {
+        type: String,
+        required: true,
+    },
+    isFirstLogin: {
+        type: Boolean,
+        default: true,
+    },
+    studentId: { // College roll number
+        type: String,
+        required: function () {
+            return this.role === 'Student';
+        },
+        unique: true,
+        sparse: true,
+    },
+    idCardPhotoURL: {
+        type: String,
+        required: function () {
+            return this.role === 'Student';
+        },
+    },
 }, {
-  timestamps: true,
+    timestamps: true,
 });
 
-module.exports = mongoose.model('User', UserSchema);
+// 🔐 Pre-save hook to hash password
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next(); // Only hash if password changed or new
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (err) {
+        return next(err);
+    }
+});
+
+export default mongoose.model('User', UserSchema);
