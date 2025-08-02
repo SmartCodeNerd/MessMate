@@ -9,6 +9,66 @@ const generateRandomPassword = () => {
     return crypto.randomBytes(5).toString('hex');
 };
 
+exports.signUpSuperAdmin = async (req, res, next) => {
+    const { name,email, pw, confirmPw, contactNumber } = req.body;
+
+    try {
+        if( !name || !email || !pw || !confirmPw ){
+            return res.status(403).json({
+                success: false,
+                message: "Name, Email, Password and Confirm Password fields are required to fill"
+            })
+        }
+        // check 2 pws
+        if( pw !== confirmPw ){
+            return res.status(403).json({
+                success: false,
+                message: "Password and Confirm Password do not match. Please try again."
+            });
+        }
+
+        // Check if user already exists
+        let user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ success: false, message: 'User with this email already exists' });
+        }
+
+        // Generate hashed password given by super admin
+        const hashedPassword = await bcrypt.hash(pw, 12);
+
+        // Create new college admin user
+        user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            role: 'CollegeAdmin',
+            contactNumber,
+            isFirstLogin: true, // Important for the first login flow
+        });
+
+        await user.save();
+
+        // Send credentials to the new admin's email
+        const emailSubject = 'Your Super Admin Account Credentials';
+        const emailText = `Hello ${name},\n\nYour account has been created for the Mess Coupon System.\n\nEmail: ${email}\nPassword: ${pw}\n\n.\n\nThank you,\nSuperadmin`;
+
+        await sendEmail({
+            to: email,
+            subject: emailSubject,
+            text: emailText,
+        });
+
+        res.status(201).json({
+            success: true,
+            message: `Super admin ${name} registered successfully. Credentials sent to ${email}.`
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 exports.registerCollegeAdmin = async (req, res, next) => {
     // This route should be protected by an isSuperAdmin middleware
     const { name, email, collegeId } = req.body;
@@ -263,5 +323,3 @@ exports.completeFirstLogin = async (req, res, next) => {
         res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
-
-

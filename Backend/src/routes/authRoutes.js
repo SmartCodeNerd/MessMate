@@ -1,7 +1,7 @@
 import express from 'express'
 const router = express.Router()
 
-import { registerCollegeAdmin, registerStudent, registerMessAdmin, login, 
+import { signUpSuperAdmin, registerCollegeAdmin, registerStudent, registerMessAdmin, login, 
     changePassword, completeFirstLogin } from '../controllers/auth.controller.js';
 
 import { protect, authorize } from "../middlewares/auth.js"
@@ -10,8 +10,8 @@ import { protect, authorize } from "../middlewares/auth.js"
 // ********************************************************************************************************
 //                                      Authentication routes
 // ********************************************************************************************************
-
 router.post('/login', login);
+router.post("/signup", signUpSuperAdmin);
 
 //joh banda kar rha he woh super admin hona chahiye
 router.post( '/register-college-admin', protect, authorize('SuperAdmin'), registerCollegeAdmin );
