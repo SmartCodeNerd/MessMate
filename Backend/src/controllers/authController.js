@@ -8,11 +8,6 @@ import { sendEmail } from '../utils/emailService.js';
 const generateRandomPassword = () => {
     return crypto.randomBytes(5).toString('hex');
 };
-/*
- * @desc    Register a new College Admin (Superadmin only)
- * @route   POST /api/auth/register-college-admin
- * @access  Private (Superadmin)
- */
 
 exports.registerCollegeAdmin = async (req, res, next) => {
     // This route should be protected by an isSuperAdmin middleware
@@ -62,26 +57,27 @@ exports.registerCollegeAdmin = async (req, res, next) => {
     }
 };
 
-/**
- * @desc    Register a new Student or Mess Admin (College Admin only)
- * @route   POST /api/auth/register-user
- * @access  Private (CollegeAdmin)
- */
-exports.registerStudentOrMessAdmin = async (req, res, next) => {
-    // This route should be protected by an isCollegeAdmin middleware
-    // The logged-in user's info (especially collegeId) will be in req.user from the token
+exports.registerStudent = async (req, res, next) => {
+    // This route should be protected by a CollegeAdmin middleware
+    const { name, email, studentId } = req.body;
+    const collegeId = req.user.collegeId; // From logged-in CollegeAdmin's token
 
-    const { name, email, role } = req.body;
-    const collegeId = req.user.collegeId; // Assumes middleware adds user to req
-
-    if (role !== 'Student' && role !== 'MessAdmin') {
-        return res.status(400).json({ success: false, message: 'Invalid role specified. Must be "Student" or "Mess Admin".' });
+    // Explicit validation for required fields
+    if (!name || !email || !studentId ) {
+        return res.status(400).json({ success: false, message: 'Please provide all required fields: name, email, studentId.' });
     }
-
     try {
+        // Check if user with this email already exists
         let user = await User.findOne({ email });
         if (user) {
-            return res.status(400).json({ success: false, message: 'User with this email already exists' });
+            return res.status(400).json({ success: false, message: 'A user with this email already exists.' });
+        }
+        
+        // Check if a student with this studentId already exists in the same college
+        // NOTE: Your schema should ideally have a compound unique index on {collegeId, studentId}
+        let existingStudent = await User.findOne({ collegeId, studentId });
+        if (existingStudent) {
+            return res.status(400).json({ success: false, message: `A student with ID ${studentId} already exists in this college.` });
         }
 
         const randomPassword = generateRandomPassword();
@@ -91,37 +87,80 @@ exports.registerStudentOrMessAdmin = async (req, res, next) => {
             name,
             email,
             password: hashedPassword,
-            role,
-            collegeId, // Assign the college of the creating admin
+            role: 'Student', // Set role specifically to Student
+            collegeId,
+            studentId,
             isFirstLogin: true,
         });
 
-        await user.save();
+        await user.save({ validateBeforeSave: false }); // Bypass validation for fields the student will add later
 
-        const emailSubject = 'Your Account Credentials';
-        const emailText = `Hello ${name},\n\nYour account has been created for the Mess Coupon System.\n\nRole: ${role}\nEmail: ${email}\nPassword: ${randomPassword}\n\nPlease log in and change your password.`;
+        const emailSubject = 'Your Student Account Credentials';
+        const emailText = `Hello ${name},\n\nYour student account has been created for the Mess Coupon System.\n\nEmail: ${email}\nPassword: ${randomPassword}\n\nPlease log in to continue.`;
 
         await sendEmail({ to: email, subject: emailSubject, text: emailText });
 
         res.status(201).json({
             success: true,
-            message: `${role} "${name}" registered successfully. Credentials sent to ${email}.`
+            message: `Student "${name}" registered successfully. Credentials sent to ${email}.`
         });
 
     } catch (error) {
         console.error(error);
+        // Provide more specific error for validation issues
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ success: false, message: error.message });
+        }
         res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
 
+exports.registerMessAdmin = async (req, res, next) => {
+    // This route should be protected by a CollegeAdmin middleware
+    const { name, email } = req.body;
+    const collegeId = req.user.collegeId; // From logged-in CollegeAdmin's token
 
-/**
- * @desc    Login user and return JWT
- * @route   POST /api/auth/login
- * @access  Public
- */
+    try {
+        let user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ success: false, message: 'A user with this email already exists.' });
+        }
+
+        const randomPassword = generateRandomPassword();
+        const hashedPassword = await bcrypt.hash(randomPassword, 12);
+
+        user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            role: 'MessAdmin', // Set role specifically to MessAdmin
+            collegeId,
+            isFirstLogin: true,
+        });
+
+        await user.save();
+
+        const emailSubject = 'Your Mess Admin Account Credentials';
+        const emailText = `Hello ${name},\n\nYour mess admin account has been created.\n\nEmail: ${email}\nPassword: ${randomPassword}\n\nPlease log in to continue.`;
+
+        await sendEmail({ to: email, subject: emailSubject, text: emailText });
+
+        res.status(201).json({
+            success: true,
+            message: `Mess Admin "${name}" registered successfully. Credentials sent to ${email}.`
+        });
+
+    } catch (error) {
+        console.error(error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ success: false, message: error.message });
+        }
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 exports.login = async (req, res, next) => {
-    const { email, password } = req.body;
+    const { email, password, studentId } = req.body;
 
     try {
         const user = await User.findOne({ email })
@@ -135,6 +174,13 @@ exports.login = async (req, res, next) => {
 
         if (!isMatch) {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        }
+
+        // If the user is a student, we must also validate the studentId
+        if (user.role === 'Student') {
+            if (!studentId || user.studentId !== studentId) {
+                return res.status(401).json({ success: false, message: 'Invalid credentials' });
+            }
         }
 
         // User is authenticated, create token
@@ -151,12 +197,13 @@ exports.login = async (req, res, next) => {
         });
         
         // Don't send password back
-        user.password = undefined;
+        const userObj = user.toObject();
+        delete userObj.password;
 
         res.status(200).json({
             success: true,
             token,
-            user, // Send user details (including isFirstLogin flag) to the frontend
+            user: userObj, // Send user details (including isFirstLogin flag) to the frontend
         });
 
     } catch (error) {
@@ -165,11 +212,6 @@ exports.login = async (req, res, next) => {
     }
 };
 
-/**
- * @desc    Change user password
- * @route   PUT /api/auth/change-password
- * @access  Private (Logged-in users)
- */
 exports.changePassword = async (req, res, next) => {
     const { oldPassword, newPassword } = req.body;
     const userId = req.user.id; // From auth middleware
@@ -209,11 +251,7 @@ exports.changePassword = async (req, res, next) => {
     }
 };
 
-/**
- * @desc    Allows user to dismiss the "first login" prompt without changing password
- * @route   POST /api/auth/complete-first-login
- * @access  Private (Logged-in users)
- */
+/*Allows user to dismiss the "first login" prompt without changing password*/
 exports.completeFirstLogin = async (req, res, next) => {
     const userId = req.user.id;
 
