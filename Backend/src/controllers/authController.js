@@ -41,7 +41,7 @@ exports.signUpSuperAdmin = async (req, res, next) => {
             name,
             email,
             password: hashedPassword,
-            role: 'CollegeAdmin',
+            role: 'SuperAdmin',
             contactNumber,
             isFirstLogin: true, // Important for the first login flow
         });
