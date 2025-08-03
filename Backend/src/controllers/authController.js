@@ -1,11 +1,9 @@
 import User from "../models/userModel.js";
 import "dotenv/config"; 
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
-import { sendEmail } from '../utils/emailService.js';
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
+import bcrypt from 'bcrypt';
 
 const login = catchAsync(async (req, res, next) => {
     const { email, password, studentId } = req.body;
@@ -80,10 +78,6 @@ const completeFirstLogin = catchAsync(async (req, res, next) => {
 });
 
 export {
-    createSuperAdmin,
-    createCollegeAdmin,
-    createStudent,
-    createMessAdmin,
     login,
     changePassword,
     completeFirstLogin,

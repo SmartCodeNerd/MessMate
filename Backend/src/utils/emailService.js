@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 
-exports.sendEmail = async (options) => {
+const sendEmail = async (options) => {
     // 1. Create a transporter
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // or another service
@@ -21,3 +21,5 @@ exports.sendEmail = async (options) => {
     // 3. Send the email
     await transporter.sendMail(mailOptions);
 };
+
+export default sendEmail;
