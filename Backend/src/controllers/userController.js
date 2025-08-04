@@ -166,9 +166,67 @@ const createMessAdmin = catchAsync(async (req, res, next) => {
     });
 });
 
+const updateUserById = (role) => catchAsync(async (req, res, next) => {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) return next(new AppError("User not found", 404));
+    if (user.role !== role) return next(new AppError(`User is not a ${role}`, 400));
+
+    const allowedFields = ["name", "email", "contactNumber"];
+    if (role === "Student") allowedFields.push("studentId");
+
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) user[field] = req.body[field];
+    });
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: `${role} updated successfully.`,
+      user,
+    });
+  });
+
+// ✅ Delete User by Role
+const deleteUserById = (role) => catchAsync(async (req, res, next) => {
+    const { id } = req.params;
+
+    const user = await User.findOneAndDelete({ _id: id, role });
+    if (!user) return next(new AppError(`${role} not found`, 404));
+
+    res.status(200).json({
+      success: true,
+      message: `${role} deleted successfully.`,
+    });
+  });
+
+// ✅ Export CRUD for each role
+const updateSuperAdmin = updateUserById("Super Admin");
+const deleteSuperAdmin = deleteUserById("Super Admin");
+
+const updateCollegeAdmin = updateUserById("College Admin");
+const deleteCollegeAdmin = deleteUserById("College Admin");
+
+const updateMessAdmin = updateUserById("Mess Admin");
+const deleteMessAdmin = deleteUserById("Mess Admin");
+
+const updateStudent = updateUserById("Student");
+const deleteStudent = deleteUserById("Student");
+
 export {
-    createSuperAdmin,
-    createCollegeAdmin,
-    createStudent,
-    createMessAdmin,
+  createSuperAdmin,
+  createCollegeAdmin,
+  createStudent,
+  createMessAdmin,
+  updateUserDocuments,
+  updateSuperAdmin,
+  deleteSuperAdmin,
+  updateCollegeAdmin,
+  deleteCollegeAdmin,
+  updateMessAdmin,
+  deleteMessAdmin,
+  updateStudent,
+  deleteStudent,
 };
