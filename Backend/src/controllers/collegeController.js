@@ -1,4 +1,4 @@
-import College from "../models/College.js";
+import College from "../models/collegeModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 

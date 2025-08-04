@@ -6,6 +6,7 @@ import {
     createStudent,
     createMessAdmin
 } from "../controllers/userController.js";
+import { orMiddleware } from "../customMiddleware/auth.js";
 import { protect,isSuperAdmin,isClgAdmin,isMessAdmin,isStudent} from "../customMiddleware/auth.js";
 
 router.post("/create-superAdmin", createSuperAdmin);
@@ -14,9 +15,9 @@ router.post("/create-superAdmin", createSuperAdmin);
 router.post( '/create-collegeAdmin', protect, isSuperAdmin, createCollegeAdmin );
 
 //joh banda kar rha he woh clg admin hona chahiye
-router.post( '/create-student', protect, isClgAdmin, createStudent );
+router.post( '/create-student', protect, orMiddleware(isClgAdmin,isSuperAdmin), createStudent );
 
 //joh banda kar rha he woh clg admin hona chahiye
-router.post('/create-messAdmin', protect, isClgAdmin, createMessAdmin );
+router.post('/create-messAdmin', protect, orMiddleware(isClgAdmin,isSuperAdmin), createMessAdmin );
 
 export default router;

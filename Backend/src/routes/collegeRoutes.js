@@ -11,10 +11,10 @@ import {protect,isSuperAdmin} from "../customMiddleware/auth.js"
 
 const router = express.Router();
 
-router.post("/",protect,isSuperAdmin,createCollege);
-router.get("/",protect,isSuperAdmin, getColleges);
-router.get("/:id",protect,isSuperAdmin, getCollegeById);
-router.put("/:id",protect,isSuperAdmin, updateCollege);
-router.delete("/:id",protect,isSuperAdmin,deleteCollege);
+router.post("/create-college",protect,isSuperAdmin,createCollege);
+router.get("/get-colleges",protect,isSuperAdmin, getColleges);
+router.get("/get-college/:id",protect,isSuperAdmin, getCollegeById);
+router.put("/update-college/:id",protect,isSuperAdmin, updateCollege);
+router.delete("/delete-college/:id",protect,isSuperAdmin,deleteCollege);
 
 export default router;

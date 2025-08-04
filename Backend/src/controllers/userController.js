@@ -3,11 +3,14 @@ import AppError from "../utils/appError.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import sendEmail from "../utils/emailService.js";
+import College from "../models/collegeModel.js";
+import crypto from "crypto";
 
 const generateRandomPassword = () => {
     return crypto.randomBytes(5).toString('hex'); // 10-char hex password
 };
 
+//While Creating Super Admin, Password is needed.
 const createSuperAdmin = catchAsync(async (req, res, next) => {
     const { name, email, password, contactNumber } = req.body;
 
@@ -44,12 +47,17 @@ const createSuperAdmin = catchAsync(async (req, res, next) => {
     });
 });
 
+//And when super admin creates other roles,their password is sent to them over mail.
 const createCollegeAdmin = catchAsync(async (req, res, next) => {
-    const { name, email, collegeId } = req.body;
+    const { name, email, collegeId, contactNumber } = req.body;
 
     let user = await User.findOne({ email });
     if (user) {
         return next(new AppError("User with this email already exists.", 400));
+    }
+    let college = await College.findById(collegeId);
+    if(!college) {
+        return next(new AppError("No College Found"));
     }
 
     const randomPassword = generateRandomPassword();
@@ -59,9 +67,10 @@ const createCollegeAdmin = catchAsync(async (req, res, next) => {
         name,
         email,
         password: hashedPassword,
-        role: 'CollegeAdmin',
+        role: 'College Admin',
         collegeId,
         isFirstLogin: true,
+        contactNumber,
     });
 
     await user.save();
@@ -122,7 +131,7 @@ const createStudent = catchAsync(async (req, res, next) => {
 });
 
 const createMessAdmin = catchAsync(async (req, res, next) => {
-    const { name, email } = req.body;
+    const { name, email ,contactNumber} = req.body;
     const collegeId = req.user.collegeId;
 
     let user = await User.findOne({ email });
@@ -137,9 +146,10 @@ const createMessAdmin = catchAsync(async (req, res, next) => {
         name,
         email,
         password: hashedPassword,
-        role: 'MessAdmin',
+        role: 'Mess Admin',
         collegeId,
         isFirstLogin: true,
+        contactNumber
     });
 
     await user.save();
@@ -151,7 +161,7 @@ const createMessAdmin = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
         success: true,
-        message: `Mess Admin "${name}" registered successfully. Credentials sent to ${email}.`
+        message: `Mess Admin ${name} registered successfully. Credentials sent to ${email}.`
     });
 });
 

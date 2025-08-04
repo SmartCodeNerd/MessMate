@@ -6,10 +6,9 @@ import AppError from "../utils/appError.js";
 import bcrypt from 'bcrypt';
 
 const login = catchAsync(async (req, res, next) => {
-    const { email, password, studentId } = req.body;
+    const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-
     if (!user) {
         return next(new AppError("Invalid credentials", 401));
     }
@@ -19,27 +18,26 @@ const login = catchAsync(async (req, res, next) => {
         return next(new AppError("Invalid credentials", 401));
     }
 
-    if (user.role === 'Student' && (!studentId || user.studentId !== studentId)) {
-        return next(new AppError("Invalid credentials", 401));
-    }
-
     const payload = {
         user: {
             id: user.id,
             role: user.role,
-            collegeId: user.collegeId
         }
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+    if (!process.env.JWT_SECRET || !process.env.JWT_EXPIRE) {
+        return next(new AppError("JWT secret or expire time is not defined", 500));
+    }
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
 
     const userObj = user.toObject();
     delete userObj.password;
 
     res.status(200).json({
         success: true,
+        user: userObj,
         token,
-        user: userObj
     });
 });
 

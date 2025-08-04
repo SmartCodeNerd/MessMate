@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./src/config/db.js";
 import authRoutes from './src/routes/authRoutes.js';
 import userRoutes from "./src/routes/userRoutes.js";
+import collegeRoutes from "./src/routes/collegeRoutes.js";
 dotenv.config();
 const app = express();
 
@@ -21,7 +22,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/api/auth', authRoutes);
-app.use("/api/users",userRoutes)
+app.use("/api/users",userRoutes);
+app.use("/api/college",collegeRoutes);
 
 app.listen(port,() => {
     console.log(`Server is Listening to Port-${port}`);

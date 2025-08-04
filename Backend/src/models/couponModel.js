@@ -52,4 +52,4 @@ const DailyMealSchema = new mongoose.Schema({
     timestamps: true,
     });
 
-    module.exports = mongoose.model('Coupon', CouponSchema);
+    export default mongoose.model('Coupon', CouponSchema);
