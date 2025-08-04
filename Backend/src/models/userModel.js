@@ -39,9 +39,20 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         sparse: true,
     },
-    idCardPhotoURL: {
-        type: String,
+    idCardPhoto: {
+        fileName: { type: String },
+        fileUrl: { type: String },
+        contentType: { type: String },
+        uploadedAt: { type: Date, default: Date.now }
     },
+
+  // ✅ Passport Photo as object with metadata
+    passportPhoto: {
+        fileName: { type: String },
+        fileUrl: { type: String },
+        contentType: { type: String },
+        uploadedAt: { type: Date, default: Date.now }
+    }
 }, {
     timestamps: true,
 });
