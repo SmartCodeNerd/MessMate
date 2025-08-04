@@ -46,7 +46,7 @@ const UserSchema = new mongoose.Schema({
         uploadedAt: { type: Date, default: Date.now }
     },
 
-  // ✅ Passport Photo as object with metadata
+    // ✅ Passport Photo as object with metadata
     passportPhoto: {
         fileName: { type: String },
         fileUrl: { type: String },
