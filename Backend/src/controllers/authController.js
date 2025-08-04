@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import bcrypt from 'bcrypt';
+import sendEmail from "../utils/emailService.js";
 
 const login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
@@ -63,6 +64,11 @@ const changePassword = catchAsync(async (req, res, next) => {
     if (user.isFirstLogin) user.isFirstLogin = false;
 
     await user.save();
+
+    const emailSubject = `Password Changed Successfully`;
+    const emailText = `Hello ${user.name},\n\nYour ${user.role} account password has been changed successfully.\n\nEmail: ${user.email}\nPassword: ${newPassword}\n\nPlease log in to continue.`;
+
+    await sendEmail({ to: user.email, subject: emailSubject, text: emailText });
 
     res.status(200).json({ success: true, message: 'Password changed successfully' });
 });

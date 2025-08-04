@@ -15,9 +15,11 @@ router.post("/create-superAdmin", createSuperAdmin);
 router.post( '/create-collegeAdmin', protect, isSuperAdmin, createCollegeAdmin );
 
 //joh banda kar rha he woh clg admin hona chahiye
-router.post( '/create-student', protect, orMiddleware(isClgAdmin,isSuperAdmin), createStudent );
+router.post('/create-messAdmin', protect, orMiddleware(isClgAdmin,isSuperAdmin), createMessAdmin );
 
 //joh banda kar rha he woh clg admin hona chahiye
-router.post('/create-messAdmin', protect, orMiddleware(isClgAdmin,isSuperAdmin), createMessAdmin );
+router.post( '/create-student', protect, orMiddleware(isClgAdmin,isSuperAdmin,isMessAdmin), createStudent );
+
+
 
 export default router;

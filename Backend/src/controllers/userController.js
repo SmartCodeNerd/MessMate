@@ -87,7 +87,7 @@ const createCollegeAdmin = catchAsync(async (req, res, next) => {
 });
 
 const createStudent = catchAsync(async (req, res, next) => {
-    const { name, email, studentId } = req.body;
+    const { name, email, studentId, contactNumber } = req.body;
     const collegeId = req.user.collegeId;
 
     if (!name || !email || !studentId) {
@@ -115,6 +115,7 @@ const createStudent = catchAsync(async (req, res, next) => {
         collegeId,
         studentId,
         isFirstLogin: true,
+        contactNumber,
     });
 
     await user.save({ validateBeforeSave: false });
@@ -126,7 +127,7 @@ const createStudent = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
         success: true,
-        message: `Student "${name}" registered successfully. Credentials sent to ${email}.`
+        message: `Student ${name} registered successfully. Credentials sent to ${email}.`
     });
 });
 

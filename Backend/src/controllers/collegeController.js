@@ -51,7 +51,7 @@ export const getCollegeById = catchAsync(async (req, res, next) => {
 
 // 🔹 Update a college
 export const updateCollege = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
+  const { id } = req.query;
   const updates = req.body;
 
   const updatedCollege = await College.findByIdAndUpdate(id, updates, {

@@ -41,9 +41,6 @@ const UserSchema = new mongoose.Schema({
     },
     idCardPhotoURL: {
         type: String,
-        required: function () {
-            return this.role === 'Student';
-        },
     },
 }, {
     timestamps: true,
