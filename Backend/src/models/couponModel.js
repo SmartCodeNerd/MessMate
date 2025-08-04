@@ -1,21 +1,34 @@
 import mongoose from "mongoose";
 
+const MealStatusSchema = new mongoose.Schema({
+    selected: {
+        type: String,
+        enum: ['NOT_BOUGHT', 'BOUGHT_MESS', 'BOUGHT_P2P', 'SOLD_P2P'],
+        default: 'NOT_BOUGHT',
+    },
+    status: {
+        type: String,
+        enum: ['eaten', 'not eaten'],
+        default: 'not eaten',
+    }
+}, { _id: false });
+
 const DailyMealSchema = new mongoose.Schema({
     date: {
         type: String, // Format: YYYY-MM-DD
         required: true,
     },
     breakfast: {
-        type: Boolean,
-        default: false,
+        type: MealStatusSchema,
+        default: () => ({}) // Default to a new MealStatus object
     },
     lunch: {
-        type: Boolean,
-        default: false,
+        type: MealStatusSchema,
+        default: () => ({})
     },
     dinner: {
-        type: Boolean,
-        default: false,
+        type: MealStatusSchema,
+        default: () => ({})
     }
     }, { _id: false });
 
