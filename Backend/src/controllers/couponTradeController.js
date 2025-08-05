@@ -17,6 +17,23 @@ const listCouponForTrade = catchAsync(async (req, res, next) => {
         return next(new AppError("All fields (date, meal, price) are required", 400));
     }
 
+    // Validate price cap for each meal
+    const maxPrices = {
+        breakfast: 25,
+        lunch: 45,
+        dinner: 40,
+    };
+
+    if (!maxPrices[meal]) {
+        return next(new AppError("Invalid meal type", 400));
+    }
+
+    if (price > maxPrices[meal]) {
+        return next(
+            new AppError(`Price for ${meal} cannot exceed ₹${maxPrices[meal]}`, 400)
+        );
+    }
+
     // Check if trade already exists
     const existingTrade = await CouponTrade.findOne({
         sellerId: req.user._id,
@@ -34,7 +51,9 @@ const listCouponForTrade = catchAsync(async (req, res, next) => {
         meals: { $elemMatch: { date } },
     });
 
-    if (!coupon) return next(new AppError("No valid coupon found for the given date", 404));
+    if (!coupon) {
+        return next(new AppError("No valid coupon found for the given date", 404));
+    }
 
     const todayMeal = coupon.meals.find((m) => m.date === date);
     if (!todayMeal[meal] || todayMeal[meal].selected !== "BOUGHT_MESS") {
@@ -60,6 +79,7 @@ const listCouponForTrade = catchAsync(async (req, res, next) => {
         data: trade,
     });
 });
+
 
 
 const getAvailableCouponsForTrade = catchAsync(async (req, res) => {
@@ -89,6 +109,7 @@ const buyCouponFromTrade = catchAsync(async (req, res, next) => {
         meals: { $elemMatch: { date } },
     });
 
+    // ❗ Check if user already bought this meal
     if (buyerCoupon) {
         const buyerMeal = buyerCoupon.meals.find((m) => m.date === date);
         if (buyerMeal && buyerMeal[meal]?.selected !== "NOT_BOUGHT") {
@@ -96,6 +117,7 @@ const buyCouponFromTrade = catchAsync(async (req, res, next) => {
         }
     }
 
+    // ✅ Update seller's coupon
     const sellerCoupon = await Coupon.findOne({
         userId: sellerId,
         meals: { $elemMatch: { date } },
@@ -106,12 +128,27 @@ const buyCouponFromTrade = catchAsync(async (req, res, next) => {
     sellerMeal[meal].status = "not eaten";
     await sellerCoupon.save();
 
+    // ✅ If buyer has a coupon but not this date/meal
     if (buyerCoupon) {
-        const buyerMeal = buyerCoupon.meals.find((m) => m.date === date);
+        let buyerMeal = buyerCoupon.meals.find((m) => m.date === date);
+
+        // If the date doesn't exist, push a new day object
+        if (!buyerMeal) {
+            const newDay = {
+                date,
+                breakfast: { selected: "NOT_BOUGHT", status: "not eaten" },
+                lunch: { selected: "NOT_BOUGHT", status: "not eaten" },
+                dinner: { selected: "NOT_BOUGHT", status: "not eaten" },
+            };
+            buyerCoupon.meals.push(newDay);
+            buyerMeal = newDay; // assign after pushing
+        }
+
         buyerMeal[meal].selected = "BOUGHT_P2P";
         buyerMeal[meal].status = "not eaten";
         await buyerCoupon.save();
     } else {
+        // ✅ Buyer doesn't have any coupons for the week
         const formattedMeals = [
             {
                 date,
@@ -120,6 +157,7 @@ const buyCouponFromTrade = catchAsync(async (req, res, next) => {
                 dinner: { selected: meal === "dinner" ? "BOUGHT_P2P" : "NOT_BOUGHT", status: "not eaten" },
             },
         ];
+
         await Coupon.create({
             userId: req.user._id,
             collegeId: req.user.collegeId,
@@ -127,10 +165,11 @@ const buyCouponFromTrade = catchAsync(async (req, res, next) => {
             weekEndDate: date,
             meals: formattedMeals,
             totalAmount: price,
-            paymentStatus: "paid",
+            paymentStatus: "pending",
         });
     }
 
+    // ✅ Finalize the trade
     trade.buyerId = req.user._id;
     trade.status = "sold";
     trade.soldAt = new Date();

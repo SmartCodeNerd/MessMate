@@ -62,8 +62,7 @@ const DailyMealSchema = new mongoose.Schema({
     },
     totalAmount: {
         type: Number,
-        required: true,
-        min: 432,
+        required: true
     },
     paymentStatus: {
         type: String,

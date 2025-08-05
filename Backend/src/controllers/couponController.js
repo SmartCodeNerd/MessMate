@@ -5,10 +5,10 @@ import User from "../models/userModel.js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
-import CouponTrade from "../models/couponTrade.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
 
 
 //Sample Frontend Payload
@@ -39,12 +39,15 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
         return next(new AppError("All fields are required", 400));
     }
 
+    if (totalAmount < 432) {
+        return next(new AppError("Minimum amount for mess coupon should be ₹432", 400));
+    }
+
     const user = await User.findById(req.user._id);
     if (!user) {
         return next(new AppError("User Not Found", 400));
     }
 
-    // Transform simplified meals into schema format
     const formattedMeals = meals.map(day => ({
         date: day.date,
         breakfast: {
@@ -61,7 +64,6 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
         }
     }));
 
-    // Prevent duplicate coupons for same user and week
     const existing = await Coupon.findOne({
         userId: req.user._id,
         weekStartDate,
@@ -79,7 +81,7 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
         weekEndDate,
         meals: formattedMeals,
         totalAmount,
-        paymentStatus: 'pending' // Set to 'pending' if integrating payment gateway
+        paymentStatus: 'pending'
     });
 
     res.status(201).json({

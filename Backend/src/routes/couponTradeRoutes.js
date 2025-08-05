@@ -13,13 +13,12 @@ import {
 const router = express.Router();
 
 //Coupon Trade Routes
-router.post("/coupon-trade/list", protect, isStudent, listCouponForTrade);
-router.get("/coupon-trade/available", protect, isStudent, getAvailableCouponsForTrade);
-router.post("/coupon-trade/buy", protect, isStudent, buyCouponFromTrade);
-router.get("/coupon-trade/my-listings", protect, isStudent, getMyCouponListings);
-router.get("/coupon-trade/my-purchases", protect, isStudent, getMyCouponPurchases);
-router.patch("/coupon-trade/cancel/:id", protect, isStudent, cancelCouponListing);
-
-router.get("/coupon-trade/all", protect, isClgAdmin, getAllCouponTrades);
+router.post("/create-trade", protect, isStudent, listCouponForTrade);
+router.get("/get-trades", protect, isStudent, getAvailableCouponsForTrade);
+router.post("/buy-trade", protect, isStudent, buyCouponFromTrade);
+router.get("/get-my-trades", protect, isStudent, getMyCouponListings);
+router.get("/get-my-purchases", protect, isStudent, getMyCouponPurchases);
+router.patch("/cancel-trade/:id", protect, isStudent, cancelCouponListing);
+router.get("/get-all-trade", protect, isClgAdmin, getAllCouponTrades);
 
 export default router;
