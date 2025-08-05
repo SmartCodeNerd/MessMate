@@ -5,6 +5,7 @@ import User from "../models/userModel.js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
+import CouponTrade from "../models/couponTrade.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

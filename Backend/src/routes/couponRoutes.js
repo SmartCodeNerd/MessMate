@@ -1,6 +1,11 @@
 import express from "express";
 import { protect, isStudent, isClgAdmin,isMessAdmin,isSuperAdmin, orMiddleware } from "../customMiddleware/auth.js";
-import {buyCouponFromMess,getMyCoupons,getAllCoupons,validateCoupon} from "../controllers/couponController.js";
+import {
+    buyCouponFromMess,
+    getMyCoupons,
+    getAllCoupons,
+    validateCoupon,
+} from "../controllers/couponController.js";
 
 const router = express.Router();
 
@@ -10,3 +15,4 @@ router.get("/get-all-coupons",protect,orMiddleware(isClgAdmin,isMessAdmin),getAl
 router.post("/validate-coupon", protect, orMiddleware(isStudent,isMessAdmin,isClgAdmin), validateCoupon);
 
 export default router;
+
