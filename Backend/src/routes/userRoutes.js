@@ -18,6 +18,7 @@ import {
 import { orMiddleware } from "../customMiddleware/auth.js";
 import { memoryUpload,uploadTo } from "../customMiddleware/gridFS.js";
 import { protect,isSuperAdmin,isClgAdmin,isMessAdmin,isStudent} from "../customMiddleware/auth.js";
+import { gridfs } from "../customMiddleware/gridFS.js";
 
 router.post("/create-superAdmin", createSuperAdmin);
 

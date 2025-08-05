@@ -1,6 +1,6 @@
-const { GridFSBucket } = require('mongodb');
-const mongoose = require('mongoose');
-const multer = require('multer');
+import { GridFSBucket } from 'mongodb';
+import mongoose from 'mongoose';
+import multer from 'multer';
 
 let gridfsBucket;
 
@@ -100,9 +100,4 @@ const downloadRoute = async (req, res) => {
   }
 };
 
-module.exports = {
-  memoryUpload,
-  uploadTo,
-  downloadRoute,
-  gridfs
-};
+export { memoryUpload, uploadTo, downloadRoute, gridfs };

@@ -10,6 +10,10 @@ const MealStatusSchema = new mongoose.Schema({
         type: String,
         enum: ['eaten', 'not eaten'],
         default: 'not eaten',
+    },
+    validatedAt: {
+        type: Date,
+        default: null,
     }
 }, { _id: false });
 
@@ -36,6 +40,11 @@ const DailyMealSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        required: true,
+    },
+    collegeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'College',
         required: true,
     },
     weekStartDate: {

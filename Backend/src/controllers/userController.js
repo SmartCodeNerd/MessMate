@@ -189,6 +189,32 @@ const updateUserById = (role) => catchAsync(async (req, res, next) => {
     });
   });
 
+const updateUserDocuments = catchAsync(async (req, res, next) => {
+  const { userId } = req.body;
+
+  if (!userId || !req.file) {
+    return next(new AppError("User ID and file are required", 400));
+  }
+
+  const user = await User.findById(userId);
+  if (!user) return next(new AppError("User not found", 404));
+
+  user.passportPhoto = {
+    fileName: req.file.filename,
+    fileUrl: '/files/${req.file.filename}',
+    contentType: req.file.mimetype,
+    uploadedAt: new Date(),
+  };
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Passport photo updated successfully.",
+    data: user.passportPhoto,
+  });
+});
+
 // ✅ Delete User by Role
 const deleteUserById = (role) => catchAsync(async (req, res, next) => {
     const { id } = req.params;
