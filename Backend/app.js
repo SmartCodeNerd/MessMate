@@ -6,6 +6,8 @@ import authRoutes from './src/routes/authRoutes.js';
 import userRoutes from "./src/routes/userRoutes.js";
 import collegeRoutes from "./src/routes/collegeRoutes.js";
 import couponRoutes from "./src/routes/couponRoutes.js"
+import couponTradeRoutes from "./src/routes/couponTradeRoutes.js";
+
 dotenv.config();
 const app = express();
 
@@ -26,6 +28,7 @@ app.use('/api/auth', authRoutes);
 app.use("/api/users",userRoutes);
 app.use("/api/college",collegeRoutes);
 app.use("/api/coupon",couponRoutes);
+app.use("/api/couponTrade",couponTradeRoutes);
 
 app.listen(port,() => {
     console.log(`Server is Listening to Port-${port}`);

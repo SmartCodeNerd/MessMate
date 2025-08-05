@@ -4,9 +4,13 @@ import {
     listCouponForTrade,
     getAvailableCouponsForTrade,
     buyCouponFromTrade,
+    getMyCouponListings,
+    getMyCouponPurchases,
+    cancelCouponListing,
+    getAllCouponTrades
 } from "../controllers/couponTradeController.js";
 
-import router from express.Router();
+const router = express.Router();
 
 //Coupon Trade Routes
 router.post("/coupon-trade/list", protect, isStudent, listCouponForTrade);
@@ -17,3 +21,5 @@ router.get("/coupon-trade/my-purchases", protect, isStudent, getMyCouponPurchase
 router.patch("/coupon-trade/cancel/:id", protect, isStudent, cancelCouponListing);
 
 router.get("/coupon-trade/all", protect, isClgAdmin, getAllCouponTrades);
+
+export default router;
