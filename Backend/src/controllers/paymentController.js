@@ -9,7 +9,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-export const createOrder = catchAsync(async (req, res, next) => {
+const createOrder = catchAsync(async (req, res, next) => {
   const { amount, purpose } = req.body;
 
   if (!amount || !purpose) {
@@ -39,7 +39,7 @@ export const createOrder = catchAsync(async (req, res, next) => {
   });
 });
 
-export const verifyPayment = catchAsync(async (req, res, next) => {
+const verifyPayment = catchAsync(async (req, res, next) => {
   const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
 
   const body = razorpayOrderId + "|" + razorpayPaymentId;
@@ -70,7 +70,7 @@ export const verifyPayment = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getMyPayments = catchAsync(async (req, res, next) => {
+const getMyPayments = catchAsync(async (req, res, next) => {
   const payments = await Payment.find({ userId: req.user._id }).sort({ createdAt: -1 });
 
   res.status(200).json({
@@ -78,3 +78,9 @@ export const getMyPayments = catchAsync(async (req, res, next) => {
     data: payments,
   });
 });
+
+export {
+  createOrder,
+  verifyPayment,
+  getMyPayments
+};
