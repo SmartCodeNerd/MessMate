@@ -31,8 +31,8 @@ const couponTradeSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["listed", "sold", "cancelled"],
-    default: "listed",
+    enum: ["available", "sold", "cancelled"],
+    default: "available",
   },
   createdAt: {
     type: Date,
