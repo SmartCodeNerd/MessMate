@@ -27,11 +27,10 @@ const protect = async (req, res, next) => {
 const isRole = (roleName) => {
   return async (req, res, next) => {
     try {
-      
       if (req.user?.role?.toString() === roleName) {
         return next(); 
       }
-
+      
       return next(new AppError(`Access denied: ${roleName} only`, 403));
     } catch (error) {
       return next(new AppError('Server error: ' + error.message, 500));
