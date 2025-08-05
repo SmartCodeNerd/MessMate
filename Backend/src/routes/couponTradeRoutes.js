@@ -18,6 +18,7 @@ router.get("/get-trades", protect, isStudent, getAvailableCouponsForTrade);
 router.post("/buy-trade", protect, isStudent, buyCouponFromTrade);
 router.get("/get-my-trades", protect, isStudent, getMyCouponListings);
 router.get("/get-my-purchases", protect, isStudent, getMyCouponPurchases);
+//if a user creates a trade an then cancels it and then again creates a trade another trade document is created....
 router.patch("/cancel-trade/:id", protect, isStudent, cancelCouponListing);
 router.get("/get-all-trade", protect, isClgAdmin, getAllCouponTrades);
 

@@ -1,4 +1,3 @@
-// controllers/couponTradeController.js
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import Coupon from "../models/couponModel.js";
