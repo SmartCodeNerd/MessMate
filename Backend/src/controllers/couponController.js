@@ -125,7 +125,6 @@ const getAllCoupons = catchAsync(async (req, res, next) => {
 
 const validateCoupon = catchAsync(async (req, res, next) => {
     const userId = req.user._id;
-    console.log("Check",req.user);
     const { meal } = req.body;
 
     if (!userId || !meal) {
@@ -137,12 +136,11 @@ const validateCoupon = catchAsync(async (req, res, next) => {
         return next(new AppError("Invalid meal type", 400));
     }
 
-    // Get current IST time and date
-    const now = moment().tz("Asia/Kolkata");
+    // ✅ Get current IST time and date using dayjs
+    const now = dayjs().tz("Asia/Kolkata");
     const currentTime = now.format("HH:mm");
     const todayDate = now.format("YYYY-MM-DD");
 
-    // Define meal time windows with relaxation (+10 minutes)
     const mealTimeFrames = {
         breakfast: { start: "07:00", end: "09:10" },
         lunch: { start: "12:00", end: "14:10" },
@@ -157,7 +155,6 @@ const validateCoupon = catchAsync(async (req, res, next) => {
 
     const isExpired = currentTime > end;
 
-    // Find the user's coupon for this week that includes today's date
     const coupon = await Coupon.findOne({
         userId,
         meals: { $elemMatch: { date: todayDate } },
@@ -167,7 +164,6 @@ const validateCoupon = catchAsync(async (req, res, next) => {
         return next(new AppError("No valid coupon found for today", 404));
     }
 
-    // Find the correct daily meal entry
     const todayMeal = coupon.meals.find(m => m.date === todayDate);
 
     if (!todayMeal[meal] || todayMeal[meal].selected === "NOT_BOUGHT") {
@@ -181,10 +177,10 @@ const validateCoupon = catchAsync(async (req, res, next) => {
         });
     }
 
-    // Mark based on time validity
+    // ✅ Update status based on whether current time is within meal window
     if (!isExpired) {
         todayMeal[meal].status = "eaten";
-        todayMeal[meal].validatedAt = now.toDate();
+        todayMeal[meal].validatedAt = now.toDate(); // keep as Date object for Mongo
     } else {
         todayMeal[meal].status = "not eaten";
     }
@@ -202,6 +198,8 @@ const validateCoupon = catchAsync(async (req, res, next) => {
         }
     });
 });
+
+
 
 
 export {
