@@ -13,23 +13,24 @@ import {
   deleteMessAdmin,
   updateStudent,
   deleteStudent,
-  updateUserDocuments
+  updateUserDocuments,
+  getAllStudents
 } from "../controllers/userController.js";
 import { orMiddleware } from "../customMiddleware/auth.js";
-import { memoryUpload,uploadTo } from "../customMiddleware/gridFS.js";
-import { protect,isSuperAdmin,isClgAdmin,isMessAdmin,isStudent} from "../customMiddleware/auth.js";
+import { memoryUpload, uploadTo } from "../customMiddleware/gridFS.js";
+import { protect, isSuperAdmin, isClgAdmin, isMessAdmin, isStudent } from "../customMiddleware/auth.js";
 import { gridfs } from "../customMiddleware/gridFS.js";
 
 router.post("/create-superAdmin", createSuperAdmin);
 
 //joh banda kar rha he woh super admin hona chahiye
-router.post( '/create-collegeAdmin', protect, isSuperAdmin, createCollegeAdmin );
+router.post('/create-collegeAdmin', protect, isSuperAdmin, createCollegeAdmin);
 
 //joh banda kar rha he woh clg admin hona chahiye
-router.post('/create-messAdmin', protect, orMiddleware(isClgAdmin,isSuperAdmin), createMessAdmin );
+router.post('/create-messAdmin', protect, orMiddleware(isClgAdmin, isSuperAdmin), createMessAdmin);
 
 //joh banda kar rha he woh clg admin hona chahiye
-router.post( '/create-student', protect, orMiddleware(isClgAdmin,isSuperAdmin,isMessAdmin), createStudent );
+router.post('/create-student', protect, orMiddleware(isClgAdmin, isSuperAdmin, isMessAdmin), createStudent);
 
 // ✅ Update documents route
 router.patch(
@@ -42,6 +43,8 @@ router.patch(
   uploadTo(gridfs),
   updateUserDocuments
 );
+
+router.get("/get-all-students", protect, isClgAdmin, getAllStudents);
 
 router.patch("/update-superAdmin/:id", protect, isSuperAdmin, updateSuperAdmin);
 router.patch("/update-collegeAdmin/:id", protect, orMiddleware(isSuperAdmin), updateCollegeAdmin);

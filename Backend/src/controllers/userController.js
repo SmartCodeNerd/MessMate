@@ -56,7 +56,7 @@ const createCollegeAdmin = catchAsync(async (req, res, next) => {
         return next(new AppError("User with this email already exists.", 400));
     }
     let college = await College.findById(collegeId);
-    if(!college) {
+    if (!college) {
         return next(new AppError("No College Found"));
     }
 
@@ -132,7 +132,7 @@ const createStudent = catchAsync(async (req, res, next) => {
 });
 
 const createMessAdmin = catchAsync(async (req, res, next) => {
-    const { name, email ,contactNumber} = req.body;
+    const { name, email, contactNumber } = req.body;
     const collegeId = req.user.collegeId;
 
     let user = await User.findOne({ email });
@@ -177,42 +177,42 @@ const updateUserById = (role) => catchAsync(async (req, res, next) => {
     if (role === "Student") allowedFields.push("studentId");
 
     allowedFields.forEach(field => {
-      if (req.body[field] !== undefined) user[field] = req.body[field];
+        if (req.body[field] !== undefined) user[field] = req.body[field];
     });
 
     await user.save();
 
     res.status(200).json({
-      success: true,
-      message: `${role} updated successfully.`,
-      user,
+        success: true,
+        message: `${role} updated successfully.`,
+        user,
     });
-  });
+});
 
 const updateUserDocuments = catchAsync(async (req, res, next) => {
-  const { userId } = req.body;
+    const { userId } = req.body;
 
-  if (!userId || !req.file) {
-    return next(new AppError("User ID and file are required", 400));
-  }
+    if (!userId || !req.file) {
+        return next(new AppError("User ID and file are required", 400));
+    }
 
-  const user = await User.findById(userId);
-  if (!user) return next(new AppError("User not found", 404));
+    const user = await User.findById(userId);
+    if (!user) return next(new AppError("User not found", 404));
 
-  user.passportPhoto = {
-    fileName: req.file.filename,
-    fileUrl: '/files/${req.file.filename}',
-    contentType: req.file.mimetype,
-    uploadedAt: new Date(),
-  };
+    user.passportPhoto = {
+        fileName: req.file.filename,
+        fileUrl: '/files/${req.file.filename}',
+        contentType: req.file.mimetype,
+        uploadedAt: new Date(),
+    };
 
-  await user.save();
+    await user.save();
 
-  res.status(200).json({
-    success: true,
-    message: "Passport photo updated successfully.",
-    data: user.passportPhoto,
-  });
+    res.status(200).json({
+        success: true,
+        message: "Passport photo updated successfully.",
+        data: user.passportPhoto,
+    });
 });
 
 // ✅ Delete User by Role
@@ -223,10 +223,10 @@ const deleteUserById = (role) => catchAsync(async (req, res, next) => {
     if (!user) return next(new AppError(`${role} not found`, 404));
 
     res.status(200).json({
-      success: true,
-      message: `${role} deleted successfully.`,
+        success: true,
+        message: `${role} deleted successfully.`,
     });
-  });
+});
 
 // ✅ Export CRUD for each role
 const updateSuperAdmin = updateUserById("Super Admin");
@@ -241,18 +241,42 @@ const deleteMessAdmin = deleteUserById("Mess Admin");
 const updateStudent = updateUserById("Student");
 const deleteStudent = deleteUserById("Student");
 
+const getAllStudents = catchAsync(async (req, res, next) => {
+    const collegeId = req.user.collegeId;
+
+    const college = await College.findById(collegeId);
+    if (!college) {
+        return next(new AppError("College Not Found", 404));
+    }
+
+    const students = await User.find({ collegeId, role: "Student" })
+        .select("_id name email studentId contactNumber");
+
+    if (students.length === 0) {
+        return next(new AppError("No Students Registered For this College", 400));
+    }
+
+    res.status(200).json({
+        success: true,
+        message: `Students under ${college.name} fetched successfully.`,
+        data: students,
+    });
+});
+
+
 export {
-  createSuperAdmin,
-  createCollegeAdmin,
-  createStudent,
-  createMessAdmin,
-  updateUserDocuments,
-  updateSuperAdmin,
-  deleteSuperAdmin,
-  updateCollegeAdmin,
-  deleteCollegeAdmin,
-  updateMessAdmin,
-  deleteMessAdmin,
-  updateStudent,
-  deleteStudent,
+    createSuperAdmin,
+    createCollegeAdmin,
+    createStudent,
+    createMessAdmin,
+    updateUserDocuments,
+    updateSuperAdmin,
+    deleteSuperAdmin,
+    updateCollegeAdmin,
+    deleteCollegeAdmin,
+    updateMessAdmin,
+    deleteMessAdmin,
+    updateStudent,
+    deleteStudent,
+    getAllStudents
 };
