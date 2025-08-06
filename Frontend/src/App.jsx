@@ -1,8 +1,23 @@
-import './App.css'
-import React from 'react'
-function App() {
-  return (
-    <h1 className="text-4xl font-bold text-blue-600">Hello World</h1>
-  )
+import { useState } from 'react'
+import Login from './pages/Login.jsx'
+import Home from './pages/Home.jsx'
+
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userRole, setUserRole] = useState('student')
+
+  const handleLogin = (role) => {
+    setUserRole(role)
+    setIsLoggedIn(true)
+  }
+
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+  }
+
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />
+  }
+
+  return <Home userRole={userRole} onLogout={handleLogout} />
 }
-export default App
