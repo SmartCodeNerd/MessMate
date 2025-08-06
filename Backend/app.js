@@ -7,6 +7,8 @@ import userRoutes from "./src/routes/userRoutes.js";
 import collegeRoutes from "./src/routes/collegeRoutes.js";
 import couponRoutes from "./src/routes/couponRoutes.js"
 import couponTradeRoutes from "./src/routes/couponTradeRoutes.js";
+import paymentRoutes from "./src/routes/paymentRoutes.js";
+import globalErrorHandler from "./src/utils/globalErrorHandler.js";
 
 dotenv.config();
 const app = express();
@@ -29,6 +31,9 @@ app.use("/api/users",userRoutes);
 app.use("/api/college",collegeRoutes);
 app.use("/api/coupon",couponRoutes);
 app.use("/api/couponTrade",couponTradeRoutes);
+app.use("/api/payment",paymentRoutes);
+
+app.use(globalErrorHandler);
 
 app.listen(port,() => {
     console.log(`Server is Listening to Port-${port}`);

@@ -1,17 +1,11 @@
-import Razorpay from "razorpay";
+import razorpay from "../config/razorpay.js";
 import crypto from "crypto";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import Payment from "../models/paymentModel.js";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
-
 const createOrder = catchAsync(async (req, res, next) => {
   const { amount, purpose } = req.body;
-
   if (!amount || !purpose) {
     return next(new AppError("Amount and purpose are required", 400));
   }
@@ -21,9 +15,9 @@ const createOrder = catchAsync(async (req, res, next) => {
     currency: "INR",
     receipt: `rcpt_${Date.now()}`,
   };
-
+  console.log("Options",options);
   const order = await razorpay.orders.create(options);
-
+  console.log("Order",order);
   await Payment.create({
     userId: req.user._id,
     amount,

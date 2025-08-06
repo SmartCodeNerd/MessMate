@@ -4,8 +4,7 @@ import {
   verifyPayment,
   getMyPayments,
 } from "../controllers/paymentController.js";
-import { protect } from "../middlewares/authMiddleware.js";
-import { isStudent } from "../middlewares/roleMiddleware.js";
+import { protect, isStudent } from "../customMiddleware/auth.js";
 
 const router = express.Router();
 

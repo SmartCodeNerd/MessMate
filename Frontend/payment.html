@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  </head>
+  <body>
+    <button id="pay">Pay Now</button>
+    <script>
+      document.getElementById("pay").onclick = function () {
+        const options = {
+          key: "rzp_test_t6SQN4cfaHaWT4", // your test key
+          amount: 50000,
+          currency: "INR",
+          order_id: "order_R1vazZm2rnL9n1", // use orderId from /createOrder
+          handler: function (response) {
+            alert("Payment Successful!\n" + JSON.stringify(response));
+            // copy razorpay_payment_id and razorpay_signature from here
+          },
+          prefill: {
+            name: "Test User",
+            email: "gupta.gulshan2003@gmail.com",
+          }
+        };
+        const rzp = new Razorpay(options);
+        rzp.open();
+      };
+    </script>
+  </body>
+</html>
