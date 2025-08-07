@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useAuthStore from '../stores/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
+
+  // 🔒 Redirect to dashboard if user is logged in
+  useEffect(() => {
+    if (user?.role) {
+      switch (user.role) {
+        case 'Student':
+          navigate('/student-dashboard');
+          break;
+        case 'Mess Admin':
+          navigate('/messadmin-dashboard');
+          break;
+        case 'College Admin':
+          navigate('/collegeadmin-dashboard');
+          break;
+        case 'Super Admin':
+          navigate('/superadmin-dashboard');
+          break;
+        default:
+          break;
+      }
+    }
+  }, [user, navigate]);
 
   const handleLogin = () => {
     navigate('/login');

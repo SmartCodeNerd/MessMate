@@ -8,6 +8,7 @@ import StudentDashBoard from "../pages/StudentDashBoard.jsx"
 import MessAdminDashBoard from "../pages/MessAdminDashBoard.jsx";
 import CollegeAdminDashBoard from '../pages/CollegeAdminDashBoard.jsx';
 import SuperAdminDashBoard from "../pages/SuperAdminDashBoard.jsx";
+import ProtectedRoute from './protectedRoute.jsx';
 
 const router = createBrowserRouter([
   {
@@ -20,19 +21,35 @@ const router = createBrowserRouter([
   },
   {
     path: '/student-dashboard',
-    element: <StudentDashBoard />,
+    element: (
+      <ProtectedRoute role="Student">
+        <StudentDashBoard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/messadmin-dashboard',
-    element: <MessAdminDashBoard />,
+    element: (
+      <ProtectedRoute role="Mess Admin">
+        <MessAdminDashBoard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/collegeadmin-dashboard',
-    element: <CollegeAdminDashBoard />,
+    element: (
+      <ProtectedRoute role="College Admin">
+        <CollegeAdminDashBoard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/superadmin-dashboard',
-    element: <SuperAdminDashBoard />,
+    element: (
+      <ProtectedRoute role="Super Admin">
+        <SuperAdminDashBoard />
+      </ProtectedRoute>
+    ),
   },
 ]);
 

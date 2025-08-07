@@ -27,7 +27,7 @@ const Navbar = () => {
     const handleLogout = async () => {
         try {
             await logout();
-            navigate('/');
+            navigate("/", { replace: true });
         } catch (err) {
             console.error('Logout failed:', err);
         }

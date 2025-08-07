@@ -9,6 +9,25 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (user) {
+      switch (user.role) {
+        case 'Super Admin':
+          navigate('/superadmin-dashboard', { replace: true });
+          break;
+        case 'Mess Admin':
+          navigate('/messadmin-dashboard', { replace: true });
+          break;
+        case 'College Admin':
+          navigate('/collegeadmin-dashboard', { replace: true });
+          break;
+        default:
+          navigate('/student-dashboard', { replace: true });
+      }
+    }
+  }, [user, navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     await login(email, password);
@@ -17,24 +36,6 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  useEffect(() => {
-    if (user) {
-      switch (user.role) {
-        case 'Super Admin':
-          navigate('/superadmin-dashboard');
-          break;
-        case 'Mess Admin':
-          navigate('/messadmin-dashboard');
-          break;
-        case 'College Admin':
-          navigate('/collegeadmin-dashboard');
-          break;
-        default:
-          navigate('/student-dashboard');
-      }
-    }
-  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
