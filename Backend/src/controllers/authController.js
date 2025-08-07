@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt';
 import sendEmail from "../utils/emailService.js";
 
 const login = catchAsync(async (req, res, next) => {
+    console.log(req.body);
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
