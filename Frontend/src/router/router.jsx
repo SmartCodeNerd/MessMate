@@ -3,7 +3,7 @@ import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
 import Login from "../pages/Login.jsx";
-// import Home from './pages/Home';
+import Home from "../pages/Home.jsx";
 // import StudentDashBoard from './pages/StudentDashBoard';
 // import MessAdminDashBoard from './pages/MessAdminDashBoard';
 // import CollegeAdminDashBoard from './pages/CollegeAdminDashBoard';
@@ -11,13 +11,13 @@ import Login from "../pages/Login.jsx";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/login',
     element: <Login />, // default route
+  },
+  {
+    path: '/home',
+    element: <Home />,
   }
-//   {
-//     path: '/home',
-//     element: <Home />,
-//   },
 //   {
 //     path: '/student-dashboard',
 //     element: <StudentDashBoard />,

@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+const getBaseUrl = () => {
+  return import.meta.env.VITE_BASE_URL;
+};
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.BASE_URL, // your backend base URL
+  baseURL: getBaseUrl(), // your backend base URL
   withCredentials: true,
 });
 
