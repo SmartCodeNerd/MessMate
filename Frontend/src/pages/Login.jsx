@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
 
 const Login = () => {
@@ -6,6 +7,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -16,11 +18,29 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  useEffect(() => {
+    if (user) {
+      switch (user.role) {
+        case 'Super Admin':
+          navigate('/superadmin-dashboard');
+          break;
+        case 'Mess Admin':
+          navigate('/messadmin-dashboard');
+          break;
+        case 'College Admin':
+          navigate('/collegeadmin-dashboard');
+          break;
+        default:
+          navigate('/student-dashboard');
+      }
+    }
+  }, [user, navigate]);
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">MessMate</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Welcome to MessMate</h2>
           <p className="mt-2 text-center text-sm text-gray-600">Sign in to your account</p>
         </div>
         {error && <p className="text-center text-sm text-red-500">{error}</p>}

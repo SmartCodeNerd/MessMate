@@ -1,0 +1,79 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../stores/useAuthStore';
+
+const Navbar = () => {
+    const { user, logout } = useAuthStore();
+    const navigate = useNavigate();
+
+    const getUserName = () => {
+        return user?.name || 'User';
+    };
+
+    const getUserInitial = () => {
+        return user?.name?.charAt(0)?.toUpperCase() || 'U';
+    };
+
+    const getRoleDisplay = () => {
+        const roleMap = {
+            'Student': 'STUDENT',
+            'Mess Admin': 'MESS ADMIN',
+            'College Admin': 'COLLEGE ADMIN',
+            'Super Admin': 'SUPER ADMIN',
+        };
+        return roleMap[user?.role] || 'USER';
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/');
+        } catch (err) {
+            console.error('Logout failed:', err);
+        }
+    };
+
+
+    return (
+        <nav className="bg-white shadow-md p-4 flex justify-between items-center">
+            <div className="flex items-center">
+                <h1 className="text-2xl font-bold text-blue-600">MessMate</h1>
+                {user && (
+                    <span className="ml-3 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                        {getRoleDisplay()}
+                    </span>
+                )}
+            </div>
+            <div className="flex items-center space-x-4">
+                {user ? (
+                    <>
+                        <div className="flex items-center space-x-2">
+                            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                                <span className="text-white text-sm font-medium">{getUserInitial()}</span>
+                            </div>
+                            <span className="text-gray-700 font-medium">{getUserName()}</span>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md"
+                            title="Logout"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h3a3 3 0 013 3v1"
+                                />
+                            </svg>
+                        </button>
+                    </>
+                ) : (
+                    <span className="text-gray-600">Not logged in</span>
+                )}
+            </div>
+        </nav>
+    );
+};
+
+export default Navbar;

@@ -1,9 +1,19 @@
 import axios from './axiosInstance';
 
-export const loginUser = (email, password) => {
+const loginUser = (email, password) => {
   return axios.post('/auth/login', { email, password });
 };
 
-export const logoutUser = () => {
+const logoutUser = () => {
   return axios.post('/auth/logout');
+};
+
+const changePassword = () => {
+  return axios.post('/auth/change-password');
+}
+
+export {
+  loginUser,
+  logoutUser,
+  changePassword
 };

@@ -43,6 +43,14 @@ const login = catchAsync(async (req, res, next) => {
     });
 });
 
+const logoutUser = catchAsync(async (req, res, next) => {  
+  console.log("Hello World-logout");
+  res.status(200).json({
+    success: true,
+    message: 'User logged out successfully',
+  });
+});
+
 const changePassword = catchAsync(async (req, res, next) => {
     const { oldPassword, newPassword } = req.body;
     const userId = req.user.id;
@@ -84,6 +92,7 @@ const completeFirstLogin = catchAsync(async (req, res, next) => {
 
 export {
     login,
+    logoutUser,
     changePassword,
     completeFirstLogin,
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import './CollegeAdminDashboard.css';
+
 
 const CollegeAdminDashboard = () => {
   return (
