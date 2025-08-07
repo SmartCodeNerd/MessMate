@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import useAuthStore from '../stores/useAuthStore';
-import Navbar from '../components/navbar';
+import Navbar from '../components/Navbar.jsx';
 import ChangePassword from './ChangePassword';
 import Colleges from './superAdmin-dashboard/Colleges';
-import Dashboard from "../pages/superAdmin-dashboard/Dashboard.jsx"
+import Dashboard from "./superAdmin-dashboard/Dashboard.jsx"
 
 const SuperAdminDashboard = () => {
   const { user, logout } = useAuthStore();
@@ -90,7 +90,7 @@ const SuperAdminDashboard = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-6 overflow-auto">
+        <div className="flex-1 overflow-auto">
           <ActiveComponent />
         </div>
       </div>
