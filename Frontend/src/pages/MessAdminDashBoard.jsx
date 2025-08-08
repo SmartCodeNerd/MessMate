@@ -9,12 +9,13 @@ import Profile from './messAdmin-dashboard/Profile';
 const MessAdminDashBoard = () => {
   const { user, logout } = useAuthStore();
   const [activeSection, setActiveSection] = useState('Dashboard');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
 
   const sections = {
     Dashboard,
     Students,
-    'Mark Meals': Analytics, // Using Analytics as a placeholder for Mark Meals
+    'Mark Meals': Analytics,
     Profile,
   };
 
@@ -31,8 +32,21 @@ const MessAdminDashBoard = () => {
     logout();
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const handleMouseEnter = () => {
+    if (!isPinned) {
+      setIsSidebarOpen(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isPinned) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  const togglePin = () => {
+    setIsPinned(!isPinned);
+    setIsSidebarOpen(!isPinned);
   };
 
   return (
@@ -43,22 +57,46 @@ const MessAdminDashBoard = () => {
       <div className="flex flex-1">
         {/* Sidebar */}
         <div
-          className={`bg-gray-50 border-r border-gray-200 transition-all duration-300 ${
+          className={`bg-gray-50 border-r border-gray-200 transition-all duration-300 ease-in-out relative ${
             isSidebarOpen ? 'w-64' : 'w-16'
           }`}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          <div className="p-6 flex items-center justify-between">
-            {isSidebarOpen && (
-              <h2 className="text-xl font-bold text-gray-800">MessMate</h2>
-            )}
+          <div className="p-6 space-y-2">
+            {sidebarSections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.label)}
+                className={`w-full flex items-center py-3 rounded-lg text-left transition-colors relative ${
+                  activeSection === section.label
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'text-gray-600 hover:bg-gray-100'
+                } ${isSidebarOpen ? 'px-4 space-x-3' : 'justify-center'}`}
+              >
+                <span className="text-lg flex-shrink-0">{section.icon}</span>
+                {isSidebarOpen && (
+                  <span className="font-medium whitespace-nowrap overflow-hidden">
+                    {section.label}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          {/* Collapse Button */}
+          <div
+            className={`absolute bottom-4 w-full flex ${
+              isSidebarOpen && !isPinned ? 'justify-center' : 'justify-end pr-4'
+            } transition-all duration-300 ease-in-out`}
+          >
             <button
-              onClick={toggleSidebar}
+              onClick={togglePin}
               className="text-gray-600 hover:text-blue-600 focus:outline-none"
-              title={isSidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'}
+              title={isPinned ? 'Unpin Sidebar' : 'Pin Sidebar'}
             >
               <svg
                 className={`w-5 h-5 transition-transform duration-300 ${
-                  isSidebarOpen ? '' : 'rotate-180'
+                  isPinned ? 'rotate-180' : ''
                 }`}
                 fill="none"
                 stroke="currentColor"
@@ -72,22 +110,6 @@ const MessAdminDashBoard = () => {
                 />
               </svg>
             </button>
-          </div>
-          <div className="p-6 space-y-2">
-            {sidebarSections.map((section) => (
-              <button
-                key={section.id}
-                onClick={() => setActiveSection(section.label)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  activeSection === section.label
-                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                <span className="text-lg">{section.icon}</span>
-                {isSidebarOpen && <span className="font-medium">{section.label}</span>}
-              </button>
-            ))}
           </div>
         </div>
 
