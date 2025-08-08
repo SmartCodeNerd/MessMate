@@ -21,13 +21,9 @@ const Colleges = () => {
       showCancelButton: true,
       confirmButtonText: 'Submit',
       cancelButtonText: 'Cancel',
-      didOpen: () => {
-        const popup = Swal.getPopup();
-        popup.style.background = 'rgba(255, 255, 255, 0.9)';
-        document.body.style.filter = 'blur(5px)';
-      },
-      willClose: () => {
-        document.body.style.filter = 'none';
+      customClass: {
+        popup: 'bg-white bg-opacity-90', // Keep popup clear
+        container: 'bg-blur', // Apply blur to the container background
       },
       preConfirm: async () => {
         const name = document.getElementById('swal-name').value;
@@ -56,13 +52,9 @@ const Colleges = () => {
       showCancelButton: true,
       confirmButtonText: 'Update',
       cancelButtonText: 'Cancel',
-      didOpen: () => {
-        const popup = Swal.getPopup();
-        popup.style.background = 'rgba(255, 255, 255, 0.9)';
-        document.body.style.filter = 'blur(5px)';
-      },
-      willClose: () => {
-        document.body.style.filter = 'none';
+      customClass: {
+        popup: 'bg-white bg-opacity-90', // Keep popup clear
+        container: 'bg-blur', // Apply blur to the container background
       },
       preConfirm: async () => {
         const name = document.getElementById('swal-name').value;
@@ -89,11 +81,8 @@ const Colleges = () => {
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
       cancelButtonText: 'No, cancel',
-      didOpen: () => {
-        document.body.style.filter = 'blur(5px)';
-      },
-      willClose: () => {
-        document.body.style.filter = 'none';
+      customClass: {
+        container: 'bg-blur', // Apply blur to the container background
       },
     }).then((result) => {
       if (result.isConfirmed) {
