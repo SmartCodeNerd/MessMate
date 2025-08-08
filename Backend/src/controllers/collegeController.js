@@ -73,7 +73,6 @@ export const updateCollege = catchAsync(async (req, res, next) => {
 // 🔹 Delete a college
 export const deleteCollege = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  console.log("Here",id);
 
   const deletedCollege = await College.findByIdAndDelete(id);
   if (!deletedCollege) {
