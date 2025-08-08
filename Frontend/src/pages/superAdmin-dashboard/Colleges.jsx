@@ -123,18 +123,18 @@ const Colleges = () => {
           <>
             <ul className="list-none p-0">
               {currentColleges.map((college) => (
-                <li key={college.id} className="mb-2.5 text-lg flex items-center justify-between">
+                <li key={college._id} className="mb-2.5 text-lg flex items-center justify-between">
                   <span>{college.name} (Code: {college.code})</span>
                   <div>
                     <button
                       className="px-2.5 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none mr-2"
-                      onClick={() => handleUpdateCollege(college.id, college.name, college.code)}
+                      onClick={() => handleUpdateCollege(college._id, college.name, college.code)}
                     >
                       ✏️
                     </button>
                     <button
                       className="px-2.5 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
-                      onClick={() => handleDeleteCollege(college.id)}
+                      onClick={() => handleDeleteCollege(college._id)}
                     >
                       🗑️
                     </button>

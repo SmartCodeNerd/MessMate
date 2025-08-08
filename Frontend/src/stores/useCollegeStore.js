@@ -56,6 +56,7 @@ const useCollegeStore = create((set) => ({
   },
 
   deleteCollege: async (id) => {
+    console.log("Delete Clg",id);
     set({ loading: true, error: null });
     try {
       await deleteCollege(id);
