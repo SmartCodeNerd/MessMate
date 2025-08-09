@@ -5,11 +5,11 @@ import useAuthStore from '../stores/useAuthStore';
 const Navbar = () => {
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
-    const [currentTime, setCurrentTime] = useState(new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+    const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentTime(new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+            setCurrentTime(new Date());
         }, 1000);
         return () => clearInterval(timer);
     }, []);
@@ -41,6 +41,23 @@ const Navbar = () => {
         }
     };
 
+    const formatDate = () => {
+        return currentTime.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        }).replace(/(\d+)/, (match) => match.padStart(2, '0'));
+    };
+
+    const formatTime = () => {
+        return currentTime.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        });
+    };
+
     return (
         <nav className="bg-white shadow-md p-4 flex justify-between items-center">
             <div className="flex items-center">
@@ -52,7 +69,7 @@ const Navbar = () => {
                 )}
             </div>
             <div className="flex items-center space-x-4">
-                <span className="text-gray-600 text-sm"><b>{currentTime}</b></span>
+                <span className="text-gray-600 text-sm"><b>{formatDate()}       {formatTime()}</b></span>
                 {user ? (
                     <>
                         <div className="flex items-center space-x-2">
