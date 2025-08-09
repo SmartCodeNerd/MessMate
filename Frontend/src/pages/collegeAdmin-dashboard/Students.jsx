@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import useUserStore from '../../stores/useUserStore';
-import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
-const Students = () => {
+const StudentManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', studentId: '', contactNumber: '' });
   const [editId, setEditId] = useState(null);
   const { users, loading, error, getAllStudents, createStudent, updateStudent, deleteStudent } = useUserStore();
 
   useEffect(() => {
-    getAllStudents();
-  }, []);
+    if (!showForm) {
+      getAllStudents();
+    }
+  }, [showForm]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,17 +23,16 @@ const Students = () => {
     try {
       if (editId) {
         await updateStudent(editId, formData);
-        toast.success('Student updated successfully');
+        Swal.fire('Success', 'Student updated successfully', 'success');
       } else {
         await createStudent(formData);
-        toast.success('Student created successfully');
+        Swal.fire('Success', 'Student created successfully', 'success');
       }
       setFormData({ name: '', email: '', studentId: '', contactNumber: '' });
       setEditId(null);
       setShowForm(false);
-      getAllStudents();
     } catch (err) {
-      toast.error(error || 'Operation failed');
+      Swal.fire('Error', error || 'Operation failed', 'error');
     }
   };
 
@@ -47,33 +48,41 @@ const Students = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteStudent(id);
-      toast.success('Student deleted successfully');
-      getAllStudents();
-    } catch (err) {
-      toast.error(error || 'Delete failed');
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action will permanently delete the student.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteStudent(id);
+        Swal.fire('Success', 'Student deleted successfully', 'success');
+        getAllStudents();
+      } catch (err) {
+        Swal.fire('Error', error || 'Delete failed', 'error');
+      }
     }
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Student Management</h1>
-      <button
-        onClick={() => {
-          setShowForm(!showForm);
-          setEditId(null);
-          setFormData({ name: '', email: '', studentId: '', contactNumber: '' });
-        }}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-      >
-        {showForm ? 'Cancel' : 'Add Student'}
-      </button>
+      {!showForm && (
+        <button
+          onClick={() => setShowForm(true)}
+          className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+        >
+          Add Student
+        </button>
+      )}
 
       {showForm && (
         <div className="mb-6 p-4 border rounded">
           <h2 className="text-xl font-semibold mb-4">{editId ? 'Edit Student' : 'Add New Student'}</h2>
-          <div onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium">Name</label>
               <input
@@ -117,62 +126,76 @@ const Students = () => {
                 className="w-full p-2 border rounded"
               />
             </div>
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="bg-green-500 text-white px-4 py-2 rounded disabled:bg-gray-400"
-            >
-              {loading ? 'Processing...' : editId ? 'Update Student' : 'Create Student'}
-            </button>
+            <div className="flex justify-between">
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="bg-green-500 text-white px-4 py-2 rounded disabled:bg-gray-400"
+              >
+                {loading ? 'Processing...' : editId ? 'Update Student' : 'Create Student'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowForm(false);
+                  setEditId(null);
+                  setFormData({ name: '', email: '', studentId: '', contactNumber: '' });
+                }}
+                className="text-blue-500 hover:underline"
+              >
+                Back
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Email</th>
-              <th className="border p-2">Student ID</th>
-              <th className="border p-2">Contact Number</th>
-              <th className="border p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((student) => (
-              <tr key={student._id}>
-                <td className="border p-2">{student.name}</td>
-                <td className="border p-2">{student.email}</td>
-                <td className="border p-2">{student.studentId}</td>
-                <td className="border p-2">{student.contactNumber}</td>
-                <td className="border p-2">
-                  <button
-                    onClick={() => handleEdit(student)}
-                    className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(student._id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                    disabled={loading}
-                  >
-                    Delete
-                  </button>
-                </td>
+      {!showForm && (
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border p-2">Name</th>
+                <th className="border p-2">Email</th>
+                <th className="border p-2">Student ID</th>
+                <th className="border p-2">Contact Number</th>
+                <th className="border p-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {users.length === 0 && !loading && (
-          <p className="text-center mt-4">No students found.</p>
-        )}
-        {loading && <p className="text-center mt-4">Loading...</p>}
-        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-      </div>
+            </thead>
+            <tbody>
+              {users.map((student) => (
+                <tr key={student._id}>
+                  <td className="border p-2">{student.name}</td>
+                  <td className="border p-2">{student.email}</td>
+                  <td className="border p-2">{student.studentId}</td>
+                  <td className="border p-2">{student.contactNumber}</td>
+                  <td className="border p-2">
+                    <button
+                      onClick={() => handleEdit(student)}
+                      className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(student._id)}
+                      className="bg-red-500 text-white px-2 py-1 rounded"
+                      disabled={loading}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {users.length === 0 && !loading && (
+            <p className="text-center mt-4">No students found.</p>
+          )}
+          {loading && <p className="text-center mt-4">Loading...</p>}
+          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+        </div>
+      )}
     </div>
   );
 };
 
-export default Students;
+export default StudentManagement;

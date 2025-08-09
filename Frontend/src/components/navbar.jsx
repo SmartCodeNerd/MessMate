@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
 
 const Navbar = () => {
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
+    const [currentTime, setCurrentTime] = useState(new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     const getUserName = () => {
         return user?.name || 'User';
@@ -33,7 +41,6 @@ const Navbar = () => {
         }
     };
 
-
     return (
         <nav className="bg-white shadow-md p-4 flex justify-between items-center">
             <div className="flex items-center">
@@ -45,6 +52,7 @@ const Navbar = () => {
                 )}
             </div>
             <div className="flex items-center space-x-4">
+                <span className="text-gray-600 text-sm"><b>{currentTime}</b></span>
                 {user ? (
                     <>
                         <div className="flex items-center space-x-2">
