@@ -14,14 +14,14 @@ const CollegeAdminDashBoard = () => {
 
   const sections = {
     Dashboard,
-    'All Students': Students,
+    Students,
     Analytics,
     Profile,
   };
 
   const sidebarSections = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-    { id: 'all-students', label: 'All Students', icon: '👥' },
+    { id: 'all-students', label: 'Students', icon: '👥' },
     { id: 'analytics', label: 'Analytics', icon: '📊' },
     { id: 'profile', label: 'Profile', icon: '👤' },
   ];

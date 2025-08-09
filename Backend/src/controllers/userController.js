@@ -242,6 +242,7 @@ const updateStudent = updateUserById("Student");
 const deleteStudent = deleteUserById("Student");
 
 const getAllStudents = catchAsync(async (req, res, next) => {
+    console.log("Hitting");
     const collegeId = req.user.collegeId;
 
     const college = await College.findById(collegeId);
