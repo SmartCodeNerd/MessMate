@@ -1,4 +1,4 @@
-import axios from '../api/axios'; // adjust path based on your project structure
+import axios from "./axiosInstance.js" // adjust path based on your project structure
 
 // Buy coupon
 export const buyCoupon = async (couponData, token) => {

@@ -4,7 +4,7 @@ import {
   getMyCoupons,
   getAllCoupons,
   validateCoupon,
-} from "../services/coupon"; // adjust path based on your structure
+} from "../api/coupon.js" // adjust path based on your structure
 
 const useCouponStore = create((set, get) => ({
   myCoupons: [],

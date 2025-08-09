@@ -44,7 +44,7 @@ router.patch(
   updateUserDocuments
 );
 
-router.get("/get-all-students", protect, isClgAdmin, getAllStudents);
+router.get("/get-all-students", protect, orMiddleware(isClgAdmin,isMessAdmin), getAllStudents);
 
 router.patch("/update-superAdmin/:id", protect, isSuperAdmin, updateSuperAdmin);
 router.patch("/update-collegeAdmin/:id", protect, orMiddleware(isSuperAdmin), updateCollegeAdmin);
