@@ -3,7 +3,7 @@ import { Clock, CheckCircle, XCircle } from 'lucide-react';
 import useCouponStore from '../../stores/useCouponStore';
 import useAuthStore from '../../stores/useAuthStore';
 import Swal from 'sweetalert2';
-import menu from '../../utils/mockMenu.js';
+import menu from '../../utils/mockMenu';
 
 const CouponDashboard = () => {
   const { myCoupons, loading, error, fetchMyCoupons, validateMyCoupon } = useCouponStore();
