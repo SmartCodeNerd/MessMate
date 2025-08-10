@@ -18,6 +18,7 @@ const BuyCoupon = () => {
     selectedCoupons[key] ? sum + prices[key.split('-')[1]] : sum, 0);
 
   const getWeekDates = () => {
+    console.log("User",user);
     const start = new Date(today);
     start.setDate(today.getDate() + (today.getDay() === 0 ? 1 : 2)); // Monday of next week
     const end = new Date(start);
