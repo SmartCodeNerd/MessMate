@@ -7,10 +7,10 @@ import usePaymentStore from '../../stores/usePaymentStore.js';
 
 const BuyCoupon = () => {
   const [selectedCoupons, setSelectedCoupons] = useState({});
-  const { token } = useAuthStore();
-  const { purchaseCoupon, loading: couponLoading, error: couponError, successMessage } = useCouponStore();
+  const { token,user } = useAuthStore();
+  const { purchaseCoupon, fetchMyCoupons, myCoupons, loading: couponLoading, error: couponError, successMessage } = useCouponStore();
   const { createNewOrder, verifyPaymentStatus, loading: paymentLoading, error: paymentError } = usePaymentStore();
-  const today = new Date(); // Use current date
+  const today = new Date(); // Current date (e.g., August 10, 2025, Sunday)
   const isWeekend = today.getDay() === 0 || today.getDay() === 6;
 
   const prices = { Breakfast: 25, Lunch: 45, Dinner: 40 };
@@ -18,6 +18,7 @@ const BuyCoupon = () => {
     selectedCoupons[key] ? sum + prices[key.split('-')[1]] : sum, 0);
 
   const getWeekDates = () => {
+    console.log("User",user);
     const start = new Date(today);
     start.setDate(today.getDate() + (today.getDay() === 0 ? 1 : 2)); // Monday of next week
     const end = new Date(start);
@@ -37,6 +38,12 @@ const BuyCoupon = () => {
     d.setDate(start.getDate() + i);
     return d.toISOString().split('T')[0];
   });
+
+  useEffect(() => {
+    if (token && isWeekend) {
+      fetchMyCoupons(token); // Fetch user's coupons on mount
+    }
+  }, [token, isWeekend, fetchMyCoupons]);
 
   const handleCouponClick = (day, meal) => {
     setSelectedCoupons(prev => ({
@@ -76,6 +83,15 @@ const BuyCoupon = () => {
 
     if (result.isConfirmed) {
       try {
+        // Check if coupon already exists for the week
+        const existingCoupon = myCoupons.find(
+          coupon => coupon.weekStartDate === weekStartStr && coupon.weekEndDate === weekEndStr
+        );
+        if (existingCoupon) {
+          Swal.fire('Error!', 'You have already purchased a coupon for this week.', 'error');
+          return;
+        }
+
         const order = await createNewOrder(totalPrice, 'Coupon Purchase');
         if (!order || !order.orderId) {
           throw new Error('Invalid order response from server');
@@ -94,10 +110,7 @@ const BuyCoupon = () => {
         };
 
         const options = {
-//           const getBaseUrl = () => {
-//   return import.meta.env.VITE_BASE_URL;
-// };
-          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'YOUR_DEFAULT_KEY_ID', // Fallback for testing
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'YOUR_DEFAULT_KEY_ID',
           amount: order.amount,
           currency: order.currency,
           name: 'MessMate',
@@ -112,15 +125,15 @@ const BuyCoupon = () => {
               };
               await verifyPaymentStatus(paymentData);
               await purchaseCoupon(couponData, token);
-              Swal.fire('Success!', 'Payment and coupon purchase completed successfully.', 'success');
+              Swal.fire('Success!', 'Coupon Purchase completed successfully.', 'success');
               setSelectedCoupons({});
             } catch (err) {
               Swal.fire('Error!', err.message || 'Payment verification or coupon purchase failed.', 'error');
             }
           },
           prefill: {
-            name: 'User Name', // Replace with actual user data if available
-            email: 'user@example.com', // Replace with actual user data if available
+            name: user.name, // Replace with actual user data if available
+            email: user.email, // Replace with actual user data if available
           },
           theme: {
             color: '#4682b4',

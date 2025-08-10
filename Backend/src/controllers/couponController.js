@@ -95,19 +95,16 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
 });
 
 const getMyCoupons = catchAsync(async (req, res, next) => {
+    console.log("Check");
     const userId = req.user._id;
 
     const coupons = await Coupon.find({ userId })
         .sort({ weekStartDate: -1 })
         .lean();
 
-    if (!coupons || coupons.length === 0) {
-        return next(new AppError("No coupons found for this user", 404));
-    }
-
     res.status(200).json({
         success: true,
-        data: coupons,
+        data: coupons || [], // Return empty array if no coupons found
     });
 });
 

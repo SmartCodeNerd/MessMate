@@ -34,9 +34,9 @@ const DailyMealSchema = new mongoose.Schema({
         type: MealStatusSchema,
         default: () => ({})
     }
-    }, { _id: false });
+}, { _id: false });
 
-    const CouponSchema = new mongoose.Schema({
+const CouponSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -64,13 +64,18 @@ const DailyMealSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    paymentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Payment',
+        required: true,
+    },
     paymentStatus: {
         type: String,
         enum: ['paid', 'pending', 'failed'],
         default: 'pending',
     },
-    }, {
+}, {
     timestamps: true,
-    });
+});
 
-    export default mongoose.model('Coupon', CouponSchema);
+export default mongoose.model('Coupon', CouponSchema);
