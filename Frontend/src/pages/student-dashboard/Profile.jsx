@@ -50,7 +50,7 @@ const Profile = () => {
           </div>
           <div className="mt-6 text-center">
             <button
-              className="px-6 py-2 bg-steel-blue text-white rounded-lg hover:bg-blue-600 transition-all duration-200"
+              className="px-6 py-2 bg-steel-blue text-white rounded-lg bg-blue-600 transition-all duration-200"
               disabled
             >
               Edit Profile (Coming Soon)
