@@ -73,6 +73,9 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
     if (existing) {
         return next(new AppError("Coupon for this week already exists", 409));
     }
+    console.log("Hello");
+    console.log(formattedMeals);
+    console.log(req.body);
 
     const newCoupon = await Coupon.create({
         userId: req.user._id,

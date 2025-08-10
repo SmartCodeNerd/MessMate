@@ -299,7 +299,7 @@ const CouponDashboard = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-extrabold text-gray-900 mb-3">Today's Meal Coupons</h1>
-          <p className="text-lg text-gray-600">
+          {/* <p className="text-lg text-gray-600">
             {new Date().toLocaleDateString('en-US', { 
               weekday: 'long', 
               year: 'numeric', 
@@ -313,7 +313,7 @@ const CouponDashboard = () => {
               minute: '2-digit',
               hour12: true 
             })}
-          </div>
+          </div> */}
         </div>
 
         {todaysCoupons.length > 0 ? (

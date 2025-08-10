@@ -6,6 +6,7 @@ import Payment from "../models/paymentModel.js";
 
 const createOrder = catchAsync(async (req, res, next) => {
   const { amount, purpose } = req.body;
+  console.log("Payment",req.body);
   if (!amount || !purpose) {
     return next(new AppError("Amount and purpose are required", 400));
   }
