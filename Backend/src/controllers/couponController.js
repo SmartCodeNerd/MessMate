@@ -98,10 +98,11 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
 });
 
 const getMyCoupons = catchAsync(async (req, res, next) => {
-    console.log("Check");
+    //console.log("Check");
     const userId = req.user._id;
 
     const coupons = await Coupon.find({ userId })
+        .populate("paymentId")
         .sort({ weekStartDate: -1 })
         .lean();
 
