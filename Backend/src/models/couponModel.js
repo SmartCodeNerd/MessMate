@@ -63,7 +63,7 @@ const CouponSchema = new mongoose.Schema({
     totalAmount: {
         type: Number,
         required: true
-    },
+    },  
     paymentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Payment',

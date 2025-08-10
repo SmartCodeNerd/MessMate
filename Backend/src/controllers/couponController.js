@@ -5,6 +5,7 @@ import User from "../models/userModel.js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
+import Payment from "../models/paymentModel.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -33,10 +34,10 @@ dayjs.extend(timezone);
 // }
 
 const buyCouponFromMess = catchAsync(async (req, res, next) => {
-    const { weekStartDate, weekEndDate, meals, totalAmount } = req.body;
-
-    if (!weekStartDate || !weekEndDate || !meals || meals.length === 0 || !totalAmount) {
-        return next(new AppError("All fields are required", 400));
+    const { weekStartDate, weekEndDate, meals, totalAmount, paymentId } = req.body;
+    console.log(req.body);
+    if (!weekStartDate || !weekEndDate || !meals || meals.length === 0 || !totalAmount || !paymentId) {
+        return next(new AppError("All fields including paymentId are required", 400));
     }
 
     if (totalAmount < 432) {
@@ -46,6 +47,16 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.user._id);
     if (!user) {
         return next(new AppError("User Not Found", 400));
+    }
+
+    const existing = await Coupon.findOne({
+        userId: req.user._id,
+        weekStartDate,
+        weekEndDate
+    });
+
+    if (existing) {
+        return next(new AppError("Coupon for this week already exists", 409));
     }
 
     const formattedMeals = meals.map(day => ({
@@ -63,19 +74,10 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
             status: 'not eaten'
         }
     }));
-
-    const existing = await Coupon.findOne({
-        userId: req.user._id,
-        weekStartDate,
-        weekEndDate
-    });
-
-    if (existing) {
-        return next(new AppError("Coupon for this week already exists", 409));
+    const payment = await Payment.findOne({ razorpayPaymentId: paymentId });
+    if(!payment || payment.status != "paid") {
+        return next(new AppError("Payment Not Done Successfully", 400));
     }
-    console.log("Hello");
-    console.log(formattedMeals);
-    console.log(req.body);
 
     const newCoupon = await Coupon.create({
         userId: req.user._id,
@@ -84,7 +86,8 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
         weekEndDate,
         meals: formattedMeals,
         totalAmount,
-        paymentStatus: 'pending'
+        paymentId:payment._id,
+        paymentStatus: 'paid'
     });
 
     res.status(201).json({
