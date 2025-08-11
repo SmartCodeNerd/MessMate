@@ -79,8 +79,6 @@ const listCouponForTrade = catchAsync(async (req, res, next) => {
     });
 });
 
-
-
 const getAvailableCouponsForTrade = catchAsync(async (req, res) => {
     const today = dayjs().tz("Asia/Kolkata").format("YYYY-MM-DD");
     const available = await CouponTrade.find({
