@@ -30,7 +30,7 @@ const login = catchAsync(async (req, res, next) => {
     }
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
-
+    console.log(token);
     const userObj = user.toObject();
     delete userObj.password;
 

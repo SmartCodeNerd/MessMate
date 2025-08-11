@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import useAuthStore from '../stores/useAuthStore';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/navbar.jsx';
 import ChangePassword from './ChangePassword';
 import Colleges from './superAdmin-dashboard/Colleges';
 import Dashboard from './superAdmin-dashboard/Dashboard';
+import Profile from './superAdmin-dashboard/Profile.jsx';
 
 const SuperAdminDashboard = () => {
   const { user, logout } = useAuthStore();
@@ -15,12 +16,14 @@ const SuperAdminDashboard = () => {
     Dashboard,
     Colleges,
     'Change Password': ChangePassword,
+    Profile
   };
 
   const sidebarSections = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
     { id: 'colleges', label: 'Colleges', icon: '🏫' },
     { id: 'change-password', label: 'Change Password', icon: '🔒' },
+    { id: 'profile', label: 'Profile', icon: '👤' }, // Added Profile section
   ];
 
   const ActiveComponent = sections[activeSection] || Dashboard;

@@ -58,6 +58,10 @@ const getAllStudents = () => {
   return axios.get('/users/get-all-students');
 };
 
+const getAllMembers = () => {
+  return axios.get('/users/get-all-members');
+};
+
 export {
   createSuperAdmin,
   createCollegeAdmin,
@@ -73,4 +77,5 @@ export {
   deleteMessAdmin,
   deleteStudent,
   getAllStudents,
+  getAllMembers
 };

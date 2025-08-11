@@ -7,10 +7,10 @@ import usePaymentStore from '../../stores/usePaymentStore.js';
 
 const BuyCoupon = () => {
   const [selectedCoupons, setSelectedCoupons] = useState({});
-  const { token,user } = useAuthStore();
+  const { token, user } = useAuthStore();
   const { purchaseCoupon, fetchMyCoupons, myCoupons, loading: couponLoading, error: couponError, successMessage } = useCouponStore();
   const { createNewOrder, verifyPaymentStatus, loading: paymentLoading, error: paymentError } = usePaymentStore();
-  const today = new Date(); // Current date (e.g., August 10, 2025, Sunday)
+  const today = new Date(); // Current date (August 10, 2025, Sunday)
   const isWeekend = today.getDay() === 0 || today.getDay() === 6;
 
   const prices = { Breakfast: 25, Lunch: 45, Dinner: 40 };
@@ -124,6 +124,9 @@ const BuyCoupon = () => {
                 razorpaySignature: response.razorpay_signature,
               };
               await verifyPaymentStatus(paymentData);
+              // Include paymentId in couponData
+              couponData.paymentId = response.razorpay_payment_id;
+              console.log("Here",couponData);
               await purchaseCoupon(couponData, token);
               Swal.fire('Success!', 'Coupon Purchase completed successfully.', 'success');
               setSelectedCoupons({});
@@ -132,8 +135,8 @@ const BuyCoupon = () => {
             }
           },
           prefill: {
-            name: user.name, // Replace with actual user data if available
-            email: user.email, // Replace with actual user data if available
+            name: user?.name || 'User Name',
+            email: user?.email || 'user@example.com',
           },
           theme: {
             color: '#4682b4',
@@ -172,15 +175,15 @@ const BuyCoupon = () => {
     };
   }, []);
 
-  if (!isWeekend) {
-    return (
-      <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-        <p className="text-xl font-semibold text-steel-blue">
-          This Page is only Available on Saturday and Sunday
-        </p>
-      </div>
-    );
-  }
+  // if (!isWeekend) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
+  //       <p className="text-xl font-semibold text-steel-blue">
+  //         This Page is only Available on Saturday and Sunday
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -222,7 +225,7 @@ const BuyCoupon = () => {
         </p>
         <button
           className={`px-6 py-2 rounded-lg font-semibold text-white ${
-            totalPrice >= 432 && !couponLoading && !paymentLoading ? 'bg-steel-blue hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'
+            totalPrice >= 432 && !couponLoading && !paymentLoading ? 'bg-steel-blue bg-blue-600' : 'bg-gray-400 cursor-not-allowed'
           }`}
           disabled={totalPrice < 432 || couponLoading || paymentLoading}
           onClick={handleCheckout}

@@ -16,6 +16,7 @@ import {
   deleteMessAdmin,
   deleteStudent,
   getAllStudents,
+  getAllMembers,
 } from '../api/user';
 
 const useUserStore = create(
@@ -189,6 +190,18 @@ const useUserStore = create(
           return res.data;
         } catch (err) {
           set({ error: err.response?.data?.message || 'Failed to fetch students', loading: false });
+          throw err;
+        }
+      },
+
+      getAllMembers: async () => {
+        set({ loading: true, error: null });
+        try {
+          const res = await getAllMembers();
+          set({ users: res.data.data, loading: false });
+          return res.data;
+        } catch (err) {
+          set({ error: err.response?.data?.message || 'Failed to fetch Members', loading: false });
           throw err;
         }
       },

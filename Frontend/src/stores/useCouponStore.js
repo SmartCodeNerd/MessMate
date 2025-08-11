@@ -1,10 +1,5 @@
-import { create } from "zustand";
-import {
-  buyCoupon,
-  getMyCoupons,
-  getAllCoupons,
-  validateCoupon,
-} from "../api/coupon.js" // adjust path based on your structure
+import { create } from 'zustand';
+import { buyCoupon, getMyCoupons, getAllCoupons, validateCoupon } from '../api/coupon.js';
 
 const useCouponStore = create((set, get) => ({
   myCoupons: [],
@@ -38,8 +33,10 @@ const useCouponStore = create((set, get) => ({
     try {
       const res = await buyCoupon(couponData, token);
       set({ successMessage: res.message, loading: false });
+      return res;
     } catch (error) {
       set({ error: error?.response?.data?.message || "Coupon purchase failed", loading: false });
+      throw error;
     }
   },
 
@@ -51,6 +48,7 @@ const useCouponStore = create((set, get) => ({
       return res;
     } catch (error) {
       set({ error: error?.response?.data?.message || "Coupon validation failed", loading: false });
+      throw error;
     }
   },
 
