@@ -265,6 +265,29 @@ const getAllStudents = catchAsync(async (req, res, next) => {
 });
 
 
+const getAllMembers = catchAsync(async (req, res, next) => {
+    const collegeId = req.user.collegeId;
+
+    const college = await College.findById(collegeId);
+    if (!college) {
+        return next(new AppError("College Not Found", 404));
+    }
+
+    const members = await User.find({ collegeId })
+        .select("_id name email contactNumber role");
+
+    if (members.length === 0) {
+        return next(new AppError("No Members Registered For this College", 400));
+    }
+
+    res.status(200).json({
+        success: true,
+        message: `Members under ${college.name} fetched successfully.`,
+        data: members,
+    });
+});
+
+
 export {
     createSuperAdmin,
     createCollegeAdmin,
@@ -279,5 +302,6 @@ export {
     deleteMessAdmin,
     updateStudent,
     deleteStudent,
-    getAllStudents
+    getAllStudents,
+    getAllMembers
 };

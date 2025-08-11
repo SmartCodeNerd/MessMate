@@ -14,7 +14,8 @@ import {
   updateStudent,
   deleteStudent,
   updateUserDocuments,
-  getAllStudents
+  getAllStudents,
+  getAllMembers
 } from "../controllers/userController.js";
 import { orMiddleware } from "../customMiddleware/auth.js";
 import { memoryUpload, uploadTo } from "../customMiddleware/gridFS.js";
@@ -44,7 +45,9 @@ router.patch(
   updateUserDocuments
 );
 
-router.get("/get-all-students", protect, orMiddleware(isClgAdmin,isMessAdmin), getAllStudents);
+router.get("/get-all-students", protect, orMiddleware(isClgAdmin, isMessAdmin), getAllStudents);
+
+router.get("/get-all-members", protect, orMiddleware(isClgAdmin,isMessAdmin,isSuperAdmin), getAllMembers);
 
 router.patch("/update-superAdmin/:id", protect, isSuperAdmin, updateSuperAdmin);
 router.patch("/update-collegeAdmin/:id", protect, orMiddleware(isSuperAdmin), updateCollegeAdmin);

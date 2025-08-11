@@ -5,6 +5,7 @@ import Dashboard from './collegeAdmin-dashboard/Dashboard';
 import Students from './collegeAdmin-dashboard/Students';
 import Analytics from './collegeAdmin-dashboard/Analytics';
 import Profile from './collegeAdmin-dashboard/Profile';
+import MessAdmin from "./collegeAdmin-dashboard/MessAdmin.jsx"
 
 const CollegeAdminDashBoard = () => {
   const { user, logout } = useAuthStore();
@@ -14,6 +15,7 @@ const CollegeAdminDashBoard = () => {
 
   const sections = {
     Dashboard,
+    MessAdmin,
     Students,
     Analytics,
     Profile,
@@ -21,6 +23,7 @@ const CollegeAdminDashBoard = () => {
 
   const sidebarSections = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
+    { id: 'all-messAdmins', label: 'MessAdmin', icon: '👥' },
     { id: 'all-students', label: 'Students', icon: '👥' },
     { id: 'analytics', label: 'Analytics', icon: '📊' },
     { id: 'profile', label: 'Profile', icon: '👤' },

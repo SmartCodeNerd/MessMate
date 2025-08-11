@@ -44,8 +44,8 @@ const Colleges = () => {
       },
     });
   };
-
-  const handleAssignCollegeAdmin = (collegeName,collegeId) => {
+    
+  const handleAssignCollegeAdmin = (collegeName, collegeId) => {
     Swal.fire({
       title: 'Assign College Admin',
       html: `
@@ -198,7 +198,7 @@ const Colleges = () => {
                         <button
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => {
-                            handleAssignCollegeAdmin(college.name,college._id);
+                            handleAssignCollegeAdmin(college.name, college._id);
                             toggleDropdown(null);
                           }}
                         >
@@ -241,9 +241,8 @@ const Colleges = () => {
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
                 <button
                   key={number}
-                  className={`px-2.5 py-1 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none ${
-                    currentPage === number ? 'bg-green-700' : ''
-                  }`}
+                  className={`px-2.5 py-1 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none ${currentPage === number ? 'bg-green-700' : ''
+                    }`}
                   onClick={() => paginate(number)}
                 >
                   {number}
