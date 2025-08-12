@@ -9,7 +9,7 @@ const logoutUser = () => {
 };
 
 const changePassword = () => {
-  return axios.post('/auth/change-password');
+  return axios.put('/auth/change-password');
 }
 
 export {

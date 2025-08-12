@@ -86,7 +86,7 @@ const getAvailableCouponsForTrade = catchAsync(async (req, res) => {
         collegeId: req.user.collegeId,
         date: { $gte: today },
     }).populate("sellerId", "name email");
-
+    console.log(available);
     res.status(200).json({ success: true, data: available });
 });
 

@@ -39,3 +39,14 @@ export const validateCoupon = async (meal, token) => {
   });
   return res.data;
 };
+
+
+// Check availability of coupons for a given date & meal
+export const checkCouponAvailability = async (data, token) => {
+  const res = await axios.post("/coupon/check-available", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};

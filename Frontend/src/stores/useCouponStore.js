@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { buyCoupon, getMyCoupons, getAllCoupons, validateCoupon } from '../api/coupon.js';
+import { buyCoupon, getMyCoupons, getAllCoupons, validateCoupon,checkCouponAvailability } from '../api/coupon.js';
 
 const useCouponStore = create((set, get) => ({
   myCoupons: [],
@@ -48,6 +48,18 @@ const useCouponStore = create((set, get) => ({
       return res;
     } catch (error) {
       set({ error: error?.response?.data?.message || "Coupon validation failed", loading: false });
+      throw error;
+    }
+  },
+
+  checkAvailableCoupons: async ({ date, meal, price }, token) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await checkCouponAvailability({ date, meal }, token);
+      set({ availableCoupons: res.data, loading: false });
+      return res;
+    } catch (error) {
+      set({ error: error?.response?.data?.message || "Failed to check availability", loading: false });
       throw error;
     }
   },
