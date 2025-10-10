@@ -14,16 +14,17 @@ const CouponTrade = () => {
   const {
     listCouponForTrade,
     fetchAvailableCouponsForTrade,
+    buyCouponFromTrade,
     availableTrades,
     loading,
     error,
-    successMessage
+    successMessage,
   } = useCouponTradeStore();
-  const {checkAvailableCoupons} = useCouponStore();
+  const { checkAvailableCoupons } = useCouponStore();
   const { createNewOrder, verifyPaymentStatus } = usePaymentStore();
 
   const maxPrices = { Breakfast: 25, Lunch: 45, Dinner: 40 };
-  const today = new Date('2025-08-12T09:57:00+05:30'); // Current date and time
+  const today = new Date();
 
   useEffect(() => {
     if (token) fetchAvailableCouponsForTrade(token);
@@ -40,22 +41,26 @@ const CouponTrade = () => {
 
   const handleSellSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     const { date, meal, price } = formData;
-    const formattedDate = date.toISOString().split('T')[0];
+    console.log(date);
+    const formattedDate = date.toLocaleDateString('en-CA');
+    console.log(formattedDate);
+    const lowerCaseMeal = meal.toLowerCase();
 
-    if (!price || price > maxPrices[meal]) {
+    if (!price || price > maxPrices[lowerCaseMeal]) {
       Swal.fire('Error!', `Price for ${meal} cannot exceed ₹${maxPrices[meal]}`, 'error');
       return;
     }
 
     try {
-      const availability = await checkAvailableCoupons({ date: formattedDate, meal }, token);
-      if (!availability.data.length) {
-        Swal.fire('Error!', 'You do not have a coupon for this date and meal', 'error');
-        return;
-      }
+      // const availability = await checkAvailableCoupons({ date: formattedDate, meal }, token);
+      // if (!availability.data.length) {
+      //   Swal.fire('Error!', 'You do not have a coupon for this date and meal', 'error');
+      //   return;
+      // }
 
-      await listCouponForTrade({ date: formattedDate, meal, price }, token);
+      await listCouponForTrade({ date: formattedDate, meal:lowerCaseMeal, price }, token);
       const message = `${formattedDate.split('-').reverse().join('/')}(${new Date(formattedDate).toLocaleDateString('en-US', { weekday: 'short' })}) ${meal} Coupon Available @ ₹${price}/-`;
       Swal.fire({
         title: 'Coupon Listed!',
@@ -122,7 +127,8 @@ const CouponTrade = () => {
               razorpaySignature: response.razorpay_signature,
             };
             await verifyPaymentStatus(paymentData);
-            await buyCouponFromTrade(tradeId._id, token);
+            const paymentId = response.razorpay_payment_id; // Ensure paymentId is captured
+            await buyCouponFromTrade(tradeId._id, paymentId, token); // Pass paymentId
             Swal.fire('Success!', 'Coupon bought successfully!', 'success');
             fetchAvailableCouponsForTrade(token);
           } catch (err) {

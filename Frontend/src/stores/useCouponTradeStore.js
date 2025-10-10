@@ -41,10 +41,10 @@ const useCouponTradeStore = create((set, get) => ({
     }
   },
 
-  buyCouponFromTrade: async (tradeId, token) => {
+  buyCouponFromTrade: async (tradeId, paymentId, token) => {
     set({ loading: true, error: null, successMessage: null });
     try {
-      const res = await buyCouponFromTrade(tradeId, token);
+      const res = await buyCouponFromTrade(tradeId, paymentId, token);
       set({ successMessage: res.message, loading: false });
       get().fetchMyCouponPurchases(token); // Refresh purchases
       get().fetchAvailableCouponsForTrade(token); // Refresh available trades

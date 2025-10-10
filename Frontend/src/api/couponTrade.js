@@ -18,8 +18,8 @@ export const getAvailableCouponsForTrade = async (token) => {
   return res.data;
 };
 
-export const buyCouponFromTrade = async (tradeId, token) => {
-  const res = await axios.post('/couponTrade/buy-trade', { tradeId }, {
+export const buyCouponFromTrade = async (tradeId,paymentId,token) => {
+  const res = await axios.post('/couponTrade/buy-trade', { tradeId,paymentId }, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
