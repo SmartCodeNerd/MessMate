@@ -23,6 +23,7 @@
     "sweetalert": "^2.1.2",
     "sweetalert2": "^11.22.3",
     "tailwindcss": "^4.1.11",
+    "xlsx": "^0.18.5",
     "zustand": "^5.0.7"
   },
   "devDependencies": {

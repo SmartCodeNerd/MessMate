@@ -207,8 +207,6 @@ const validateCoupon = catchAsync(async (req, res, next) => {
 });
 
 
-
-
 export {
     buyCouponFromMess,
     getMyCoupons,

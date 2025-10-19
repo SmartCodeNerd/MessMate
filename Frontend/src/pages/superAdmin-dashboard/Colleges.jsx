@@ -1,81 +1,103 @@
-import React, { useEffect, useState } from 'react';
-import useCollegeStore from '../../stores/useCollegeStore.js';
-import useUserStore from '../../stores/useUserStore.js';
-import Swal from 'sweetalert2';
+import React, { useEffect, useState } from "react";
+import { useRef } from "react";
+import useCollegeStore from "../../stores/useCollegeStore.js";
+import useUserStore from "../../stores/useUserStore.js";
+import Swal from "sweetalert2";
+import { FaPlus, FaUserShield } from "react-icons/fa";
+import { FiMoreVertical } from "react-icons/fi";
 
 const Colleges = () => {
-  const { colleges, loading, error, fetchColleges, createCollege, updateCollege, deleteCollege } = useCollegeStore();
+  const {
+    colleges,
+    loading,
+    error,
+    fetchColleges,
+    createCollege,
+    updateCollege,
+    deleteCollege,
+  } = useCollegeStore();
   const { createCollegeAdmin } = useUserStore();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [itemsPerPage] = useState(5);
   const [dropdownId, setDropdownId] = useState(null);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     fetchColleges();
   }, [fetchColleges]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleAddCollege = () => {
     Swal.fire({
-      title: 'Add College',
+      title: "Add College",
       html: `
-        <input id="swal-name" class="swal2-input" placeholder="College Name" required>
-        <input id="swal-code" class="swal2-input" placeholder="College Code" required>
+          <input id="swal-name" class="swal2-input" placeholder="College Name" required>
+          <input id="swal-code" class="swal2-input" placeholder="College Code" required>
       `,
       showCancelButton: true,
-      confirmButtonText: 'Submit',
-      cancelButtonText: 'Cancel',
-      customClass: {
-        popup: 'bg-white bg-opacity-90',
-        container: 'bg-blur',
-      },
+      confirmButtonText: "Submit",
+      cancelButtonText: "Cancel",
       preConfirm: async () => {
-        const name = document.getElementById('swal-name').value;
-        const collegeCode = document.getElementById('swal-code').value;
+        const name = document.getElementById("swal-name").value;
+        const collegeCode = document.getElementById("swal-code").value;
         if (!name || !collegeCode) {
-          Swal.showValidationMessage('Both fields are required');
+          Swal.showValidationMessage("Both fields are required");
           return false;
         }
         try {
           await createCollege(name, collegeCode);
-          Swal.fire('Success', 'College created successfully!', 'success');
-        } catch {
-          Swal.fire('Error', error || 'Failed to create college', 'error');
+        } catch (err) {
+          Swal.fire("Error", error || "Failed to create college", "error");
         }
       },
     });
   };
-    
+
   const handleAssignCollegeAdmin = (collegeName, collegeId) => {
     Swal.fire({
-      title: 'Assign College Admin',
+      title: "Assign College Admin",
       html: `
-        <input id="swal-name" class="swal2-input" placeholder="Name" required>
-        <input id="swal-email" class="swal2-input" placeholder="Email" type="email" required>
-        <input id="swal-contact" class="swal2-input" placeholder="Contact Number" required>
-        <input id="swal-collegeId" class="swal2-input" value="${collegeName}" readonly>
-        <input id="swal-role" class="swal2-input" value="College Admin" readonly>
-      `,
+            <input id="swal-name" class="swal2-input" placeholder="Name" required>
+            <input id="swal-email" class="swal2-input" placeholder="Email" type="email" required>
+            <input id="swal-contact" class="swal2-input" placeholder="Contact Number" required>
+            <input id="swal-collegeId" class="swal2-input" value="${collegeName}" readonly>
+            <input id="swal-role" class="swal2-input" value="College Admin" readonly>
+            `,
       showCancelButton: true,
-      confirmButtonText: 'Assign',
-      cancelButtonText: 'Cancel',
-      customClass: {
-        popup: 'bg-white bg-opacity-90',
-        container: 'bg-blur',
-      },
+      confirmButtonText: "Assign",
+      cancelButtonText: "Cancel",
       preConfirm: async () => {
-        const name = document.getElementById('swal-name').value;
-        const email = document.getElementById('swal-email').value;
-        //const collegeId = document.getElementById('swal-collegeId').value;
-        const contactNumber = document.getElementById('swal-contact').value;
+        const name = document.getElementById("swal-name").value;
+        const email = document.getElementById("swal-email").value;
+        const contactNumber = document.getElementById("swal-contact").value;
         if (!name || !email || !contactNumber) {
-          Swal.showValidationMessage('Name, email, and contact number are required');
+          Swal.showValidationMessage(
+            "Name, email, and contact number are required"
+          );
           return false;
         }
         try {
           await createCollegeAdmin({ name, email, collegeId, contactNumber });
-          Swal.fire('Success', 'College admin assigned successfully!', 'success');
+          Swal.fire(
+            "Success",
+            "College admin assigned successfully!",
+            "success"
+          );
         } catch (err) {
-          Swal.fire('Error', err.response?.data?.message || 'Failed to assign college admin', 'error');
+          Swal.fire(
+            "Error",
+            err.response?.data?.message || "Failed to assign college admin",
+            "error"
+          );
         }
       },
     });
@@ -83,30 +105,26 @@ const Colleges = () => {
 
   const handleUpdateCollege = (id, name, code) => {
     Swal.fire({
-      title: 'Update College',
+      title: "Update College",
       html: `
-        <input id="swal-name" class="swal2-input" value="${name}" required>
-        <input id="swal-code" class="swal2-input" value="${code}" required>
-      `,
+                <input id="swal-name" class="swal2-input" value="${name}" required>
+                <input id="swal-code" class="swal2-input" value="${code}" required>
+            `,
       showCancelButton: true,
-      confirmButtonText: 'Update',
-      cancelButtonText: 'Cancel',
-      customClass: {
-        popup: 'bg-white bg-opacity-90',
-        container: 'bg-blur',
-      },
+      confirmButtonText: "Update",
+      cancelButtonText: "Cancel",
       preConfirm: async () => {
-        const name = document.getElementById('swal-name').value;
-        const code = document.getElementById('swal-code').value;
-        if (!name || !code) {
-          Swal.showValidationMessage('Both fields are required');
+        const newName = document.getElementById("swal-name").value;
+        const newCode = document.getElementById("swal-code").value;
+        if (!newName || !newCode) {
+          Swal.showValidationMessage("Both fields are required");
           return false;
         }
         try {
-          await updateCollege(id, { name, code });
-          Swal.fire('Success', 'College updated successfully!', 'success');
+          await updateCollege(id, { name: newName, code: newCode });
+          Swal.fire("Success", "College updated successfully!", "success");
         } catch {
-          Swal.fire('Error', error || 'Failed to update college', 'error');
+          Swal.fire("Error", error || "Failed to update college", "error");
         }
       },
     });
@@ -114,145 +132,239 @@ const Colleges = () => {
 
   const handleDeleteCollege = (id) => {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'This action cannot be undone!',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel',
-      customClass: {
-        container: 'bg-blur',
-      },
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         try {
           deleteCollege(id);
-          Swal.fire('Deleted!', 'College has been deleted.', 'success');
+          Swal.fire("Deleted!", "College has been deleted.", "success");
         } catch {
-          Swal.fire('Error', error || 'Failed to delete college', 'error');
+          Swal.fire("Error", error || "Failed to delete college", "error");
         }
       }
     });
   };
 
-  const handleViewCollege = (college) => {
-    Swal.fire({
-      title: 'College Details',
-      html: `
-        <div class="text-left p-4">
-          <p><strong>Name:</strong> ${college.name || 'N/A'}</p>
-          <p><strong>Code:</strong> ${college.code || 'N/A'}</p>
-          <p><strong>ID:</strong> ${college._id || 'N/A'}</p>
-        </div>
-      `,
-      confirmButtonText: 'Close',
-      customClass: {
-        popup: 'bg-white bg-opacity-90',
-        container: 'bg-blur',
-      },
-    });
-  };
-
-  const toggleDropdown = (id) => {
-    setDropdownId(dropdownId === id ? null : id);
-  };
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentColleges = colleges.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(colleges.length / itemsPerPage);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   return (
-    <div className="h-screen flex flex-col justify-start items-center bg-gray-100 text-gray-800 font-sans text-center p-5">
-      <button
-        className="mb-8 px-5 py-2.5 text-lg bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none"
-        onClick={handleAddCollege}
-      >
-        Add College
-      </button>
-      <div className="w-full max-w-3xl bg-white p-5 rounded shadow-md">
-        <h2 className="text-4xl mb-4">Existing Colleges</h2>
-        {loading ? (
-          <p className="text-lg text-gray-500">Loading...</p>
-        ) : error ? (
-          <p className="text-lg text-gray-500">{error}</p>
-        ) : colleges.length === 0 ? (
-          <p className="text-lg text-gray-500">No colleges available.</p>
-        ) : (
-          <>
-            <ul className="list-none p-0">
-              {currentColleges.map((college) => (
-                <li key={college._id} className="mb-2.5 text-lg flex items-center justify-between">
-                  <span>{college.name} (Code: {college.code})</span>
-                  <div className="relative">
-                    <button
-                      className="px-2.5 py-1.5 text-xl bg-gray-200 text-gray-700 rounded hover:bg-gray-300 focus:outline-none"
-                      onClick={() => toggleDropdown(college._id)}
-                    >
-                      ⋮
-                    </button>
-                    {dropdownId === college._id && (
-                      <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
-                        <button
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => {
-                            handleAssignCollegeAdmin(college.name, college._id);
-                            toggleDropdown(null);
-                          }}
-                        >
-                          Assign College Admin
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => {
-                            handleViewCollege(college);
-                            toggleDropdown(null);
-                          }}
-                        >
-                          View
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => {
-                            handleUpdateCollege(college._id, college.name, college.code);
-                            toggleDropdown(null);
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => {
-                            handleDeleteCollege(college._id);
-                            toggleDropdown(null);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-5 flex justify-center gap-2.5">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+    <>
+      {/* --- Custom SweetAlert2 Styling --- */}
+      {/* It's best practice to move this to a global CSS file */}
+      <style>{`
+          .swal2-popup {
+              font-family: 'Inter', sans-serif;
+              border-radius: 1rem !important;
+              border: 1px solid #e5e7eb;
+              box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+          }
+          .swal2-title {
+              font-size: 1.5rem !important;
+              font-weight: 700 !important;
+              color: #1e3a8a !important;
+          }
+          .swal2-html-container {
+              font-size: 1rem !important;
+          }
+          .swal2-input, .swal2-select {
+              border-radius: 0.5rem !important;
+              border: 1px solid #d1d5db !important;
+              font-size: 1rem !important;
+          }
+          .swal2-input:focus, .swal2-select:focus {
+              box-shadow: 0 0 0 2px #3b82f6 !important;
+              border-color: #3b82f6 !important;
+          }
+          .swal2-confirm {
+              background-color: #2563eb !important;
+              border-radius: 0.5rem !important;
+              font-weight: 600 !important;
+          }
+          .swal2-cancel {
+              background-color: #e5e7eb !important;
+              border-radius: 0.5rem !important;
+              font-weight: 600 !important;
+          }
+          .swal2-confirm:hover, .swal2-cancel:hover {
+              opacity: 0.9;
+          }
+        `}</style>
+      <div className="min-h-screen bg-gray-50">
+        <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-extrabold text-blue-900">
+              College Management
+            </h1>
+            <p className="mt-2 text-lg text-gray-600">
+              Add colleges and assign administrators in two simple steps.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold">
+                1
+              </div>
+              <div className="flex-grow">
+                <h3 className="text-xl font-bold text-gray-800">
+                  Add a New College
+                </h3>
+                <p className="text-gray-600 mt-1 mb-4">
+                  Create a new college entry in the system.
+                </p>
                 <button
-                  key={number}
-                  className={`px-2.5 py-1 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none ${currentPage === number ? 'bg-green-700' : ''
-                    }`}
-                  onClick={() => paginate(number)}
+                  onClick={handleAddCollege}
+                  className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors"
                 >
-                  {number}
+                  <FaPlus />
+                  <span>Add College</span>
                 </button>
-              ))}
+              </div>
             </div>
-          </>
-        )}
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold">
+                2
+              </div>
+              <div className="flex-grow">
+                <h3 className="text-xl font-bold text-gray-800">
+                  Assign an Administrator
+                </h3>
+                <p className="text-gray-600 mt-1 mb-4">
+                  Select a college and assign a new admin.
+                </p>
+                <button
+                  onClick={handleAssignCollegeAdmin}
+                  className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <FaUserShield />
+                  <span>Assign Admin</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Existing Colleges
+              </h2>
+              <p className="text-gray-600 mt-1">
+                A list of all colleges currently in the system.
+              </p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="p-4 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                      #
+                    </th>
+                    <th className="p-4 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                      College Name
+                    </th>
+                    <th className="p-4 text-sm font-semibold text-gray-600 uppercase tracking-wider hidden sm:table-cell text-center">
+                      College Code
+                    </th>
+                    <th className="p-4 text-sm font-semibold text-gray-600 uppercase tracking-wider text-right">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {loading ? (
+                    <tr>
+                      <td colSpan="4" className="p-4 text-center text-gray-500">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : error ? (
+                    <tr>
+                      <td colSpan="4" className="p-4 text-center text-red-500">
+                        {error}
+                      </td>
+                    </tr>
+                  ) : colleges.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="p-4 text-center text-gray-500">
+                        No colleges found.
+                      </td>
+                    </tr>
+                  ) : (
+                    colleges.map((college, index) => (
+                      <tr key={college._id}>
+                        <td className="p-4 text-gray-500 font-medium">
+                          {index + 1}
+                        </td>
+                        <td className="p-4 text-gray-800 font-semibold">
+                          {college.name}
+                        </td>
+                        <td className="p-4 text-gray-600 hidden sm:table-cell text-center">
+                          {college.code}
+                        </td>
+                        <td className="p-4 text-right">
+                          <div
+                            className="relative inline-block"
+                            ref={
+                              dropdownId === college._id ? dropdownRef : null
+                            }
+                          >
+                            <button
+                              onClick={() =>
+                                setDropdownId(
+                                  dropdownId === college._id
+                                    ? null
+                                    : college._id
+                                )
+                              }
+                              className="p-2 rounded-full hover:bg-gray-100 text-gray-500"
+                            >
+                              <FiMoreVertical size={20} />
+                            </button>
+                            {dropdownId === college._id && (
+                              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-10">
+                                <a
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    handleUpdateCollege(
+                                      college._id,
+                                      college.name,
+                                      college.code
+                                    );
+                                    setDropdownId(null);
+                                  }}
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  Edit
+                                </a>
+                                <a
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    handleDeleteCollege(college._id);
+                                    setDropdownId(null);
+                                  }}
+                                  className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                >
+                                  Delete
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
       </div>
-    </div>
+    </>
   );
 };
 

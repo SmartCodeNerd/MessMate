@@ -1,4 +1,5 @@
 import express from "express"
+
 const router = express.Router();
 import {
   createSuperAdmin,
@@ -19,6 +20,7 @@ import {
 } from "../controllers/userController.js";
 import { orMiddleware } from "../customMiddleware/auth.js";
 import { memoryUpload, uploadTo } from "../customMiddleware/gridFS.js";
+import { createFeedback } from "../controllers/feedbackController.js";
 import { protect, isSuperAdmin, isClgAdmin, isMessAdmin, isStudent } from "../customMiddleware/auth.js";
 import { gridfs } from "../customMiddleware/gridFS.js";
 
@@ -60,5 +62,25 @@ router.delete("/delete-collegeAdmin/:id", protect, orMiddleware(isSuperAdmin), d
 router.delete("/delete-messAdmin/:id", protect, orMiddleware(isClgAdmin, isSuperAdmin), deleteMessAdmin);
 router.delete("/delete-student/:id", protect, orMiddleware(isClgAdmin, isSuperAdmin, isMessAdmin), deleteStudent);
 
+
+//============ Feedback Route =========
+// router.post(
+//     '/submit', 
+//     auth, 
+//     isStudent, 
+//     upload.array('feedbackImages', 5), // This middleware will handle the file uploads
+//     createFeedback
+// );
+
+router.post(
+  "/submit",
+  protect,
+  isStudent,
+  memoryUpload.fields([
+    { name: "feedback", maxCount: 5 },
+  ]),                           // Step 1: Upload to Memory
+  uploadTo(gridfs),             // Step 2: Move from Memory to GridFS
+  createFeedback
+);
 
 export default router;
