@@ -175,6 +175,7 @@ const BuyCoupon = () => {
     };
   }, []);
 
+  //Uncomment this to make the page available only on weekends...
   // if (!isWeekend) {
   //   return (
   //     <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">

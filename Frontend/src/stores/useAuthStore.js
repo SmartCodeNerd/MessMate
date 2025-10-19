@@ -13,20 +13,22 @@ const useAuthStore = create(
 
       login: async (email, password) => {
         set({ loading: true, error: null });
+        // Inside login in the store
         try {
+          console.log("Calling login API with:", email, password);
           const res = await loginUser(email, password);
+          console.log("Login API response:", res);
           const { user, token } = res.data;
-
-          // Set token in axios headers
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
           set({ user, token, loading: false });
         } catch (err) {
+          console.error("Login error:", err);
           set({
             error: err.response?.data?.message || 'Login failed',
             loading: false,
           });
         }
+
       },
 
       logout: async () => {
@@ -61,6 +63,12 @@ const useAuthStore = create(
     {
       name: 'auth-storage',
       getStorage: () => localStorage,
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        error: state.error
+        // Don't persist loading!
+      }),
       onRehydrateStorage: () => (state) => {
         // Set axios header on rehydrate
         const token = state?.token;

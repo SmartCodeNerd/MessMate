@@ -29,7 +29,9 @@ const Login = () => {
   }, [user, navigate]);
 
   const handleLogin = async (e) => {
+    console.log("Here Login");
     e.preventDefault();
+    console.log("Here Login");
     await login(email, password);
   };
 

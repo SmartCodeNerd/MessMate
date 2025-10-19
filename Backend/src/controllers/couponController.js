@@ -75,7 +75,7 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
         }
     }));
     const payment = await Payment.findOne({ razorpayPaymentId: paymentId });
-    if(!payment || payment.status != "paid") {
+    if (!payment || payment.status != "paid") {
         return next(new AppError("Payment Not Done Successfully", 400));
     }
 
@@ -86,7 +86,7 @@ const buyCouponFromMess = catchAsync(async (req, res, next) => {
         weekEndDate,
         meals: formattedMeals,
         totalAmount,
-        paymentId:payment._id,
+        paymentId: payment._id,
         paymentStatus: 'paid'
     });
 
@@ -111,6 +111,39 @@ const getMyCoupons = catchAsync(async (req, res, next) => {
         data: coupons || [], // Return empty array if no coupons found
     });
 });
+
+const checkAvailable = catchAsync(async (req, res, next) => {
+    const userId = req.user._id;
+    const { date, meal } = req.body;
+
+    console.log("Checking availability for:", { userId, date, meal });
+    const formatMeal = meal.toLowerCase();
+    // Validate inputs
+    if (!date || !formatMeal) {
+        return res.status(400).json({
+            success: false,
+            message: "date and meal are required",
+        });
+    }
+
+    // Query depending on data shape
+    const coupons = await Coupon.find({
+        userId,
+        meals: {
+            $elemMatch: {
+                date,
+                [`${formatMeal}.selected`]: { $ne: "NOT_BOUGHT" }
+            }
+        }
+    }).lean();
+    console.log(coupons, formatMeal);
+
+    res.status(200).json({
+        success: true,
+        data: coupons || [],
+    });
+});
+
 
 const getAllCoupons = catchAsync(async (req, res, next) => {
     const collegeId = req.user.collegeId;
@@ -212,4 +245,5 @@ export {
     getMyCoupons,
     getAllCoupons,
     validateCoupon,
+    checkAvailable
 };

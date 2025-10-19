@@ -5,13 +5,15 @@ import CouponTrade from "../models/couponTrade.js";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone.js";
 import utc from "dayjs/plugin/utc.js";
+import Payment from "../models/paymentModel.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const listCouponForTrade = catchAsync(async (req, res, next) => {
     const { date, meal, price } = req.body;
-
+    console.log("Hello");
+    console.log(req.body);
     if (!date || !meal || !price) {
         return next(new AppError("All fields (date, meal, price) are required", 400));
     }
@@ -44,7 +46,7 @@ const listCouponForTrade = catchAsync(async (req, res, next) => {
     if (existingTrade) {
         return next(new AppError("You have already listed this coupon for trade", 400));
     }
-
+    console.log("Coming Till Here1");
     const coupon = await Coupon.findOne({
         userId: req.user._id,
         meals: { $elemMatch: { date } },
@@ -86,12 +88,13 @@ const getAvailableCouponsForTrade = catchAsync(async (req, res) => {
         collegeId: req.user.collegeId,
         date: { $gte: today },
     }).populate("sellerId", "name email");
-
+    console.log(available);
     res.status(200).json({ success: true, data: available });
 });
 
 const buyCouponFromTrade = catchAsync(async (req, res, next) => {
-    const { tradeId } = req.body;
+    
+    const { tradeId,paymentId } = req.body;
     if (!tradeId) return next(new AppError("tradeId is required", 400));
 
     const trade = await CouponTrade.findById(tradeId);
@@ -154,7 +157,12 @@ const buyCouponFromTrade = catchAsync(async (req, res, next) => {
                 dinner: { selected: meal === "dinner" ? "BOUGHT_P2P" : "NOT_BOUGHT", status: "not eaten" },
             },
         ];
-
+        console.log(paymentId);
+        const payment = await Payment.findOne({ razorpayPaymentId: paymentId });
+        if (!payment || payment.status != "paid") {
+            return next(new AppError("Payment Not Done Successfully", 400));
+        }
+        console.log(payment);
         await Coupon.create({
             userId: req.user._id,
             collegeId: req.user.collegeId,
@@ -162,7 +170,8 @@ const buyCouponFromTrade = catchAsync(async (req, res, next) => {
             weekEndDate: date,
             meals: formattedMeals,
             totalAmount: price,
-            paymentStatus: "pending",
+            paymentStatus: "paid",
+            paymentId: payment._id,
         });
     }
 

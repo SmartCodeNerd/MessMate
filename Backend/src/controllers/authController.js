@@ -8,6 +8,7 @@ import sendEmail from "../utils/emailService.js";
 
 const login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
+    console.log("Hello",email,password);
     const user = await User.findOne({ email }).populate("collegeId");
     if (!user) {
         return next(new AppError("Invalid credentials", 401));
@@ -30,7 +31,7 @@ const login = catchAsync(async (req, res, next) => {
     }
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
-    console.log(token);
+    //console.log(token);
     const userObj = user.toObject();
     delete userObj.password;
 
