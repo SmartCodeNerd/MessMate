@@ -50,16 +50,17 @@ const createSuperAdmin = catchAsync(async (req, res, next) => {
 //And when super admin creates other roles,their password is sent to them over mail.
 const createCollegeAdmin = catchAsync(async (req, res, next) => {
     const { name, email, collegeId, contactNumber } = req.body;
-
+    console.log("Printing Body ",req.body);
     let user = await User.findOne({ email });
     if (user) {
         return next(new AppError("User with this email already exists.", 400));
     }
+
     let college = await College.findById(collegeId);
     if (!college) {
         return next(new AppError("No College Found"));
     }
-
+    console.log("Printing College ",college);
     const randomPassword = generateRandomPassword();
     const hashedPassword = await bcrypt.hash(randomPassword, 12);
 
@@ -72,7 +73,7 @@ const createCollegeAdmin = catchAsync(async (req, res, next) => {
         isFirstLogin: true,
         contactNumber,
     });
-
+    console.log("Printing User ",user);
     await user.save();
 
     const emailSubject = 'Your College Admin Account Credentials';
