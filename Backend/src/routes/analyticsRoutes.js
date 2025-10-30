@@ -2,7 +2,7 @@ import express from 'express'
 const router = express.Router()
 
 import { getAnalytics } from "../controllers/analyticsController.js";
-import { protect,isStudent,isSuperAdmin,isMessAdmin,isClgAdmin, orMiddleware} from "../customMiddleware/auth.js"
+import { protect,isSuperAdmin,isMessAdmin,isClgAdmin, orMiddleware} from "../customMiddleware/auth.js"
 
 router.get(
   "/",

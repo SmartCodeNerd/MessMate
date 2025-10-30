@@ -8,6 +8,7 @@ import collegeRoutes from "./src/routes/collegeRoutes.js";
 import couponRoutes from "./src/routes/couponRoutes.js"
 import couponTradeRoutes from "./src/routes/couponTradeRoutes.js";
 import paymentRoutes from "./src/routes/paymentRoutes.js";
+import analyticsRoutes from "./src/routes/analyticsRoutes.js"
 import globalErrorHandler from "./src/utils/globalErrorHandler.js";
 
 dotenv.config();
@@ -32,6 +33,7 @@ app.use("/api/college",collegeRoutes);
 app.use("/api/coupon",couponRoutes);
 app.use("/api/couponTrade",couponTradeRoutes);
 app.use("/api/payment",paymentRoutes);
+app.use("/api/analytics",analyticsRoutes);
 
 app.use(globalErrorHandler);
 
