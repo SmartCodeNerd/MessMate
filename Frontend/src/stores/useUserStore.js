@@ -23,6 +23,7 @@ const useUserStore = create(
   persist(
     (set, get) => ({
       users: [],
+      students: [],
       loading: false,
       error: null,
 
@@ -186,7 +187,7 @@ const useUserStore = create(
         set({ loading: true, error: null });
         try {
           const res = await getAllStudents();
-          set({ users: res.data.data, loading: false });
+          set({ students: res.data.data, loading: false });
           return res.data;
         } catch (err) {
           set({ error: err.response?.data?.message || 'Failed to fetch students', loading: false });

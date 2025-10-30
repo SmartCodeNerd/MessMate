@@ -14,7 +14,7 @@ const StudentManagement = () => {
   });
   const [editId, setEditId] = useState(null);
   const {
-    users,
+    students,
     loading,
     error,
     getAllStudents,
@@ -28,8 +28,6 @@ const StudentManagement = () => {
       getAllStudents();
     }
   }, [showForm]);
-
-  const students = users.filter((user) => user.role === "Student");
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
