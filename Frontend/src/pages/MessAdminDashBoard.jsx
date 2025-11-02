@@ -15,14 +15,14 @@ const MessAdminDashBoard = () => {
   const sections = {
     Dashboard,
     Students,
-    'Mark Meals': Analytics,
+    Analytics,
     Profile,
   };
 
   const sidebarSections = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
     { id: 'students', label: 'Students', icon: '👥' },
-    { id: 'mark-meals', label: 'Mark Meals', icon: '✅' },
+    { id: 'analytics', label: 'Analytics', icon: '📈'},
     { id: 'profile', label: 'Profile', icon: '👤' },
   ];
 

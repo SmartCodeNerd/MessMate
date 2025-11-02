@@ -23,7 +23,7 @@ ChartJS.register(
   ArcElement
 );
 
-const Analytics = () => {
+const SuperAdminAnalytics = () => {
   const { analytics, loading, error, fetchAnalytics } = useAnalyticsStore();
 
   useEffect(() => {
@@ -90,7 +90,7 @@ const Analytics = () => {
   const paymentStatuses = analytics.payments.map((p) => p._id);
   const paymentCounts = analytics.payments.map((p) => p.count);
 
-  const doughnutChartData = {
+  const paymentsDoughnutData = {
     labels: paymentStatuses,
     datasets: [
       {
@@ -113,11 +113,48 @@ const Analytics = () => {
     ],
   };
 
-  const doughnutChartOptions = {
+  const paymentsDoughnutOptions = {
     responsive: true,
     plugins: {
       legend: { position: "top" },
       title: { display: true, text: "Payments by Status" },
+    },
+  };
+
+  // Prepare data for User Roles Doughnut Chart
+  const userRolesLabels = ["Students", "College Admins", "Mess Admins"];
+  const userRolesData = [
+    analytics.users.students,
+    analytics.users.collegeAdmins,
+    analytics.users.messAdmins,
+  ];
+
+  const usersDoughnutData = {
+    labels: userRolesLabels,
+    datasets: [
+      {
+        label: "User Roles Breakdown",
+        data: userRolesData,
+        backgroundColor: [
+          "rgba(59, 130, 246, 0.6)", // Students
+          "rgba(34, 197, 94, 0.6)", // College Admins
+          "rgba(255, 159, 64, 0.6)", // Mess Admins
+        ],
+        borderColor: [
+          "rgba(59, 130, 246, 1)",
+          "rgba(34, 197, 94, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const usersDoughnutOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" },
+      title: { display: true, text: "User Roles Breakdown" },
     },
   };
 
@@ -126,25 +163,45 @@ const Analytics = () => {
       <main className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-blue-900">
-            College Analytics
+            Super Admin Analytics
           </h1>
           <p className="mt-2 text-lg text-gray-600">
-            Insights into students, coupons, payments, and trends.
+            System-wide insights into users, coupons, payments, and trends.
           </p>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center justify-between">
             <div>
               <h3 className="text-xl font-bold text-gray-800">
                 Total Students
               </h3>
               <p className="text-3xl font-extrabold text-blue-600 mt-2">
-                {analytics.students.totalStudents}
+                {analytics.users.students}
               </p>
             </div>
             <div className="text-blue-500 text-4xl">👥</div>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">
+                College Admins
+              </h3>
+              <p className="text-3xl font-extrabold text-blue-600 mt-2">
+                {analytics.users.collegeAdmins}
+              </p>
+            </div>
+            <div className="text-blue-500 text-4xl">🧑‍💼</div>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">Mess Admins</h3>
+              <p className="text-3xl font-extrabold text-blue-600 mt-2">
+                {analytics.users.messAdmins}
+              </p>
+            </div>
+            <div className="text-blue-500 text-4xl">👨‍🍳</div>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center justify-between">
             <div>
@@ -168,7 +225,12 @@ const Analytics = () => {
 
           {/* Payments Doughnut Chart */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-            <Doughnut data={doughnutChartData} options={doughnutChartOptions} />
+            <Doughnut data={paymentsDoughnutData} options={paymentsDoughnutOptions} />
+          </div>
+
+          {/* User Roles Doughnut Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <Doughnut data={usersDoughnutData} options={usersDoughnutOptions} />
           </div>
         </div>
       </main>
@@ -176,4 +238,4 @@ const Analytics = () => {
   );
 };
 
-export default Analytics;
+export default SuperAdminAnalytics;

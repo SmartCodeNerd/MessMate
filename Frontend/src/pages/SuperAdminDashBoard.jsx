@@ -5,6 +5,8 @@ import ChangePassword from './ChangePassword';
 import Colleges from './superAdmin-dashboard/Colleges';
 import Dashboard from './superAdmin-dashboard/Dashboard';
 import Profile from './superAdmin-dashboard/Profile.jsx';
+import Analytics from "./superAdmin-dashboard/Analytics.jsx";
+
 
 const SuperAdminDashboard = () => {
   const { user, logout } = useAuthStore();
@@ -15,6 +17,7 @@ const SuperAdminDashboard = () => {
   const sections = {
     Dashboard,
     Colleges,
+    Analytics,
     'Change Password': ChangePassword,
     Profile
   };
@@ -22,6 +25,7 @@ const SuperAdminDashboard = () => {
   const sidebarSections = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
     { id: 'colleges', label: 'Colleges', icon: '🏫' },
+    { id: 'analytics', label: 'Analytics', icon: '📊' },
     { id: 'change-password', label: 'Change Password', icon: '🔒' },
     { id: 'profile', label: 'Profile', icon: '👤' }, // Added Profile section
   ];
