@@ -55,12 +55,9 @@ const Analytics = () => {
   }
 
   // Prepare data for Weekly Bookings Bar Chart
-  const weeklyBookingsLabels = analytics.trends.weeklyBookings.map(
-    (item) => item._id
-  );
-  const weeklyBookingsData = analytics.trends.weeklyBookings.map(
-    (item) => item.count
-  );
+  const weeklyBookings = analytics.trends?.weeklyBookings || [];
+  const weeklyBookingsLabels = weeklyBookings.map((item) => item._id);
+  const weeklyBookingsData = weeklyBookings.map((item) => item.count);
 
   const barChartData = {
     labels: weeklyBookingsLabels,
@@ -87,8 +84,9 @@ const Analytics = () => {
   };
 
   // Prepare data for Payments Doughnut Chart (by status count)
-  const paymentStatuses = analytics.payments.map((p) => p._id);
-  const paymentCounts = analytics.payments.map((p) => p.count);
+  const payments = analytics.payments || [];
+  const paymentStatuses = payments.map((p) => p._id);
+  const paymentCounts = payments.map((p) => p.count);
 
   const doughnutChartData = {
     labels: paymentStatuses,
@@ -141,7 +139,7 @@ const Analytics = () => {
                 Total Students
               </h3>
               <p className="text-3xl font-extrabold text-blue-600 mt-2">
-                {analytics.students.totalStudents}
+                {analytics.students?.totalStudents || 0}
               </p>
             </div>
             <div className="text-blue-500 text-4xl">👥</div>
@@ -152,7 +150,7 @@ const Analytics = () => {
                 Total Coupons
               </h3>
               <p className="text-3xl font-extrabold text-blue-600 mt-2">
-                {analytics.coupons.totalCoupons}
+                {analytics.coupons?.totalCoupons || 0}
               </p>
             </div>
             <div className="text-blue-500 text-4xl">🎟️</div>
