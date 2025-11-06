@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useAuthStore from '../stores/useAuthStore';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar.jsx';
 import Dashboard from './messAdmin-dashboard/Dashboard';
 import Students from './messAdmin-dashboard/Students';
 import Analytics from './messAdmin-dashboard/Analytics';
