@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useAuthStore from '../stores/useAuthStore';
-import Navbar from '../components/navbar.jsx';
+import Navbar from '../components/Navbar.jsx';
 import ChangePassword from './ChangePassword';
 import Colleges from './superAdmin-dashboard/Colleges';
 import Dashboard from './superAdmin-dashboard/Dashboard';
