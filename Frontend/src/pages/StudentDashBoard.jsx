@@ -5,7 +5,7 @@ import BuyWeeklyCoupon from './student-dashboard/BuyWeeklyCoupon';
 import History from './student-dashboard/History';
 import Profile from './student-dashboard/Profile';
 import TradeCoupon from './student-dashboard/TradeCoupon';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar.jsx';
 
 const StudentDashBoard = () => {
   const { user, logout } = useAuthStore();

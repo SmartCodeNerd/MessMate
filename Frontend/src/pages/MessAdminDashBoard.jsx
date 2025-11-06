@@ -4,7 +4,7 @@ import Dashboard from './messAdmin-dashboard/Dashboard';
 import Students from './messAdmin-dashboard/Students';
 import Analytics from './messAdmin-dashboard/Analytics';
 import Profile from './messAdmin-dashboard/Profile';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar.jsx';
 
 const MessAdminDashBoard = () => {
   const { user, logout } = useAuthStore();
