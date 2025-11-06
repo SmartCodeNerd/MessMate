@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import useAuthStore from '../stores/useAuthStore';
-import Navbar from '../components/Navbar.jsx';
 import Dashboard from './messAdmin-dashboard/Dashboard';
 import Students from './messAdmin-dashboard/Students';
 import Analytics from './messAdmin-dashboard/Analytics';
 import Profile from './messAdmin-dashboard/Profile';
+import Navbar from '../components/Navbar';
 
 const MessAdminDashBoard = () => {
   const { user, logout } = useAuthStore();

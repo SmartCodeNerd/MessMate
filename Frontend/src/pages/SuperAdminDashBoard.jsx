@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import useAuthStore from '../stores/useAuthStore';
-import Navbar from '../components/Navbar.jsx';
 import ChangePassword from './ChangePassword';
 import Colleges from './superAdmin-dashboard/Colleges';
 import Dashboard from './superAdmin-dashboard/Dashboard';
 import Profile from './superAdmin-dashboard/Profile.jsx';
 import Analytics from "./superAdmin-dashboard/Analytics.jsx";
+import Navbar from '../components/Navbar.jsx';
 
 
 const SuperAdminDashboard = () => {
