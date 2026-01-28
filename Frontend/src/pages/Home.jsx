@@ -9,27 +9,28 @@ const Home = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 🔒 Redirect to dashboard " if user is logged in"
-  useEffect(() => {
-    if (user?.role) {
-      switch (user.role) {
-        case "Student":
-          navigate("/student-dashboard");
-          break;
-        case "Mess Admin":
-          navigate("/messadmin-dashboard");
-          break;
-        case "College Admin":
-          navigate("/collegeadmin-dashboard");
-          break;
-        case "Super Admin":
-          navigate("/superadmin-dashboard");
-          break;
-        default:
-          break;
-      }
-    }
-  }, [user, navigate]);
+  // 🔒 Redirect to dashboard " if user is logged in" --> this should only be present in protected routes like Login page...
+  //      else there will be an issue of auto-redirect vs manual navigation
+  // useEffect(() => {
+  //   if (user?.role) {
+  //     switch (user.role) {
+  //       case "Student":
+  //         navigate("/student-dashboard");
+  //         break;
+  //       case "Mess Admin":
+  //         navigate("/messadmin-dashboard");
+  //         break;
+  //       case "College Admin":
+  //         navigate("/collegeadmin-dashboard");
+  //         break;
+  //       case "Super Admin":
+  //         navigate("/superadmin-dashboard");
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   }
+  // }, [user, navigate]);
 
   const handleLogin = () => {
     navigate("/login");

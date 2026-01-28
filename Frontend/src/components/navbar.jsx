@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
     const { user, logout } = useAuthStore();
@@ -61,7 +62,9 @@ const Navbar = () => {
     return (
         <nav className="bg-white shadow-md p-4 flex justify-between items-center">
             <div className="flex items-center">
-                <h1 className="text-2xl font-bold text-blue-600">MessMate</h1>
+                <Link to="/" className="text-2xl font-bold text-blue-600">
+                    MessMate
+                </Link>
                 {user && (
                     <span className="ml-3 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                         {getRoleDisplay()}
