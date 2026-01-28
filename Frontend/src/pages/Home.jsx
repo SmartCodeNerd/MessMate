@@ -170,6 +170,70 @@ const Home = () => {
     },
   ];
 
+  const pricingPlans = [
+    {
+      title: "Basic Pack",
+      price: "₹500",
+      period: "/month",
+      features: ["30 Meal Coupons", "Basic Tracking", "P2P Trading"],
+      buttonText: "Select Basic",
+      isPopular: false,
+    },
+    {
+      title: "Standard Pack",
+      price: "₹900",
+      period: "/month",
+      features: ["60 Meal Coupons", "Full Analytics", "Priority Support"],
+      buttonText: "Select Standard",
+      isPopular: true,
+    },
+    {
+      title: "Premium Pack",
+      price: "₹1,500",
+      period: "/month",
+      features: ["Unlimited Meals", "Advanced Trading", "Exclusive Features"],
+      buttonText: "Select Premium",
+      isPopular: false,
+    },
+  ];
+
+  const PricingCard = ({ plan }) => (
+    <div className={`bg-white p-6 rounded-xl shadow-lg border border-gray-200 ${plan.isPopular ? 'ring-2 ring-blue-500 transform scale-105' : ''}`}>
+      {plan.isPopular && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+          Popular
+        </div>
+      )}
+      <div className="text-center">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">{plan.title}</h3>
+        <div className="mb-6">
+          <span className="text-3xl font-extrabold text-blue-600">{plan.price}</span>
+          <span className="text-gray-500 ml-1">{plan.period}</span>
+        </div>
+        <ul className="text-left space-y-2 mb-6 text-sm text-gray-600">
+          {plan.features.map((feature, index) => (
+            <li key={index} className="flex items-center space-x-2">
+              <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+        <button
+          onClick={handleLogin}
+          className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
+            plan.isPopular
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+          }`}
+        >
+          {plan.buttonText}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <style>{`
@@ -327,15 +391,15 @@ const Home = () => {
           <div id="pricing" className="py-20 sm:py-24 bg-white">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-                Subscription Plans
+                Choose Your Plan
               </h2>
-              <p className="text-base md:text-lg text-gray-600 mb-8">
-                Choose a plan that works for you.
+              <p className="text-base md:text-lg text-gray-600 mb-12 md:mb-16">
+                Flexible meal packs for every student.
               </p>
-              <div className="bg-gray-100 p-12 sm:p-16 rounded-lg">
-                <p className="text-lg sm:text-xl text-gray-500 font-semibold">
-                  Pricing details coming soon!
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {pricingPlans.map((plan, index) => (
+                  <PricingCard key={index} plan={plan} />
+                ))}
               </div>
             </div>
           </div>

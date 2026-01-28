@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import useAuthStore from '../stores/useAuthStore';
-import Navbar from '../components/Navbar';
 import Dashboard from './collegeAdmin-dashboard/Dashboard';
 import Students from './collegeAdmin-dashboard/Students';
 import Analytics from './collegeAdmin-dashboard/Analytics';
 import Profile from './collegeAdmin-dashboard/Profile';
 import MessAdmin from "./collegeAdmin-dashboard/MessAdmin.jsx"
+import Navbar from '../components/Navbar.jsx';
 
 const CollegeAdminDashBoard = () => {
   const { user, logout } = useAuthStore();

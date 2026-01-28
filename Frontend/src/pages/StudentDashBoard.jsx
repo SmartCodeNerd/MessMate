@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import useAuthStore from '../stores/useAuthStore';
-import Navbar from '../components/Navbar';
 import Dashboard from './student-dashboard/Dashboard';
 import BuyWeeklyCoupon from './student-dashboard/BuyWeeklyCoupon';
 import History from './student-dashboard/History';
 import Profile from './student-dashboard/Profile';
 import TradeCoupon from './student-dashboard/TradeCoupon';
+import Navbar from '../components/Navbar.jsx';
 
 const StudentDashBoard = () => {
   const { user, logout } = useAuthStore();

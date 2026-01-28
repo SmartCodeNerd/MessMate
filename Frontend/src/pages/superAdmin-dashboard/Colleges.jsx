@@ -62,14 +62,17 @@ const Colleges = () => {
     });
   };
 
-  const handleAssignCollegeAdmin = (collegeName, collegeId) => {
+  const handleAssignCollegeAdmin = () => {
     Swal.fire({
       title: "Assign College Admin",
       html: `
             <input id="swal-name" class="swal2-input" placeholder="Name" required>
             <input id="swal-email" class="swal2-input" placeholder="Email" type="email" required>
             <input id="swal-contact" class="swal2-input" placeholder="Contact Number" required>
-            <input id="swal-collegeId" class="swal2-input" value="${collegeName}" readonly>
+            
+            <select id="swal-collegeId" class="swal2-select" required>
+        ${colleges.map(c => `<option value="${c._id}">${c.name} (${c.code})</option>`).join('')}
+      </select>
             <input id="swal-role" class="swal2-input" value="College Admin" readonly>
             `,
       showCancelButton: true,
@@ -79,9 +82,10 @@ const Colleges = () => {
         const name = document.getElementById("swal-name").value;
         const email = document.getElementById("swal-email").value;
         const contactNumber = document.getElementById("swal-contact").value;
-        if (!name || !email || !contactNumber) {
+        const collegeId = document.getElementById("swal-collegeId").value;
+        if (!name || !email || !contactNumber || !collegeId) {
           Swal.showValidationMessage(
-            "Name, email, and contact number are required"
+            "All Fields are required"
           );
           return false;
         }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useUserStore from '../../stores/useUserStore';
+import { FaEye } from 'react-icons/fa';
 
 const MessAdminStudents = () => {
   const [currPage, setCurrPage] = useState('list');
@@ -30,76 +31,130 @@ const MessAdminStudents = () => {
   const student = users.find((s) => s._id === selectedStudentId);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      {currPage === 'list' && (
-        <>
-          <h1 className="text-2xl font-bold mb-4">Students List</h1>
-          <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Search students by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse border">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border p-2">Name</th>
-                  <th className="border p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredStudents.map((student) => (
-                  <tr key={student._id}>
-                    <td className="border p-2">{student.name}</td>
-                    <td className="border p-2">
-                      <button
-                        onClick={() => handleView(student._id)}
-                        className="bg-blue-500 text-white px-2 py-1 rounded"
-                        disabled={loading}
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {filteredStudents.length === 0 && !loading && (
-              <p className="text-center mt-4">No students found.</p>
-            )}
-            {loading && <p className="text-center mt-4">Loading...</p>}
-            {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-          </div>
-        </>
-      )}
+    <div className="min-h-screen bg-gray-50">
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {currPage === 'list' && (
+          <>
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-extrabold text-blue-900">
+                Students List
+              </h1>
+              <p className="mt-2 text-lg text-gray-600">
+                View and manage student records.
+              </p>
+            </div>
 
-      {currPage === 'view' && (
-        <div className="p-4 border rounded">
-          {loading && <p className="text-center mt-4">Loading...</p>}
-          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-          {!loading && !error && !student && (
-            <p className="text-center mt-4">Student not found.</p>
-          )}
-          {student && (
-            <>
-              <h2 className="text-xl font-semibold mb-4">{student.name}</h2>
-              <p><strong>Email:</strong> {student.email}</p>
-              <p><strong>Student ID:</strong> {student.studentId}</p>
-              <p><strong>Contact Number:</strong> {student.contactNumber || 'N/A'}</p>
+            <div className="mb-6">
+              <input
+                type="text"
+                placeholder="Search students by name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="p-4 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="p-4 text-sm font-semibold text-gray-600 uppercase tracking-wider text-center">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {loading ? (
+                      <tr>
+                        <td colSpan="2" className="p-4 text-center text-gray-500">
+                          Loading...
+                        </td>
+                      </tr>
+                    ) : error ? (
+                      <tr>
+                        <td colSpan="2" className="p-4 text-center text-red-500">
+                          {error}
+                        </td>
+                      </tr>
+                    ) : filteredStudents.length === 0 ? (
+                      <tr>
+                        <td colSpan="2" className="p-4 text-center text-gray-500">
+                          No students found.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredStudents.map((student, index) => (
+                        <tr key={student._id}>
+                          <td className="p-4 text-gray-800 font-semibold">
+                            {student.name}
+                          </td>
+                          <td className="p-4 text-center">
+                            <button
+                              onClick={() => handleView(student._id)}
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                              title="View"
+                              disabled={loading}
+                            >
+                              <FaEye size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+
+        {currPage === 'view' && (
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 max-w-2xl mx-auto">
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Student Details
+              </h2>
               <button
                 onClick={handleBack}
-                className="mt-4 text-blue-500 hover:underline"
+                className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium"
               >
-                Back
+                <span>Back</span>
               </button>
-            </>
-          )}
-        </div>
-      )}
+            </div>
+            <div className="p-6">
+              {loading && <p className="text-center text-gray-500">Loading...</p>}
+              {error && <p className="text-center text-red-500">{error}</p>}
+              {!loading && !error && !student && (
+                <p className="text-center text-gray-500">Student not found.</p>
+              )}
+              {student && (
+                <div className="space-y-4 text-gray-700">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Name:</span>
+                    <span>{student.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Email:</span>
+                    <span>{student.email}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Student ID:</span>
+                    <span>{student.studentId}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Contact Number:</span>
+                    <span>{student.contactNumber || 'N/A'}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };
