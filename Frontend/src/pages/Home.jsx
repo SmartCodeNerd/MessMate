@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Footer } from "../components/footer";
-import { FeatureCard } from "../components/featureCard";
+import { Footer } from "../components/Footer";
+import { FeatureCard } from "../components/FeatureCard";
 import useAuthStore from "../stores/useAuthStore";
 import { useNavigate } from "react-router-dom";
 
