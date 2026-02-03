@@ -21,10 +21,26 @@ connectDB();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://mess-mate-six.vercel.app",
+];
+
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL, YOUR-VERCEL.vercel.app,],  
+  origin: (origin, callback) => {
+    // Allow requests with no origin (Render health checks, Postman, server calls)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // ❌ DO NOT throw error here (crashes server)
+    return callback(null, false);
+  },
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 
 app.use('/api/auth', authRoutes);
