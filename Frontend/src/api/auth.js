@@ -1,15 +1,15 @@
-import axios from './axiosInstance';
+import axiosInstance from './axiosInstance';
 
 const loginUser = (email, password) => {
-  return axios.post('/auth/login', { email, password });
+  return axiosInstance.post('/api/auth/login', { email, password });
 };
 
 const logoutUser = () => {
-  return axios.post('/auth/logout');
+  return axiosInstance.post('/api/auth/logout');
 };
 
 const changePassword = () => {
-  return axios.put('/auth/change-password');
+  return axiosInstance.put('/api/auth/change-password');
 }
 
 export {
